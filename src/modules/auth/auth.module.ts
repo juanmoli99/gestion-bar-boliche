@@ -7,6 +7,10 @@ import { LoginController } from './application/login/login.controller';
 import { LoginService } from './application/login/login.service';
 import { LoginUseCase } from './application/login/login.use-case';
 
+import { RefreshTokenController } from './application/refresh-token/refresh-token.controller';
+import { RefreshTokenService } from './application/refresh-token/refresh-token.service';
+import { RefreshTokenUseCase } from './application/refresh-token/refresh-token.use-case';
+
 import { AuthPrismaRepository } from './infrastructure/repositories/auth.prisma.repository';
 
 @Module({
@@ -16,11 +20,16 @@ import { AuthPrismaRepository } from './infrastructure/repositories/auth.prisma.
   ],
   controllers: [
     LoginController,
+    RefreshTokenController,
   ],
   providers: [
+    AuthPrismaRepository,
+
     LoginService,
     LoginUseCase,
-    AuthPrismaRepository,
+
+    RefreshTokenService,
+    RefreshTokenUseCase,
   ],
   exports: [
     JwtModule,
