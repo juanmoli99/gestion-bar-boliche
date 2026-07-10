@@ -19,10 +19,16 @@ import { DeactivateItemController } from './application/deactivate-item/deactiva
 import { DeactivateItemRepository } from './application/deactivate-item/deactivate-item.repository';
 import { DeactivateItemService } from './application/deactivate-item/deactivate-item.service';
 import { DeactivateItemUseCase } from './application/deactivate-item/deactivate-item.use-case';
+import { ReactivateItemController } from './application/reactivate-item/reactivate-item.controller';
+import { ReactivateItemRepository } from './application/reactivate-item/reactivate-item.repository';
+import { ReactivateItemService } from './application/reactivate-item/reactivate-item.service';
+import { ReactivateItemUseCase } from './application/reactivate-item/reactivate-item.use-case';
+
 
 @Module({
   controllers: [
   CreateItemController,
+  ReactivateItemController,
   ListItemsController,
   FindItemByIdController,
   UpdateItemController,
@@ -48,6 +54,10 @@ import { DeactivateItemUseCase } from './application/deactivate-item/deactivate-
   DeactivateItemRepository,
   DeactivateItemService,
   DeactivateItemUseCase,
+
+  ReactivateItemRepository,
+  ReactivateItemService,
+  ReactivateItemUseCase,
 ],
 })
 export class InventoryModule {}
