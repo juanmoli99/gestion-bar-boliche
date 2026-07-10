@@ -7,12 +7,16 @@ import { FindUserByIdUseCase } from './application/find-user-by-id/find-user-by-
 import { CreateUserController } from './application/create-user/create-user.controller';
 import { CreateUserService } from './application/create-user/create-user.service';
 import { CreateUserUseCase } from './application/create-user/create-user.use-case';
+import { ListUsersController } from './application/list-users/list-users.controller';
+import { ListUsersRepository } from './application/list-users/list-users.repository';
+import { ListUsersUseCase } from './application/list-users/list-users.use-case';
 
 @Module({
   imports: [PrismaModule],
   controllers: [
   CreateUserController,
   FindUserByIdController,
+  ListUsersController,
   ],
   providers: [
   CreateUserRepository,
@@ -20,6 +24,8 @@ import { CreateUserUseCase } from './application/create-user/create-user.use-cas
   CreateUserUseCase,
   FindUserByIdRepository,
   FindUserByIdUseCase,
+  ListUsersRepository,
+  ListUsersUseCase,
   ],
 })
 export class UsersModule {}
