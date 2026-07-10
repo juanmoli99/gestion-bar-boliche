@@ -13,6 +13,9 @@ import { ListUsersUseCase } from './application/list-users/list-users.use-case';
 import { UpdateUserController } from './application/update-user/update-user.controller';
 import { UpdateUserRepository } from './application/update-user/update-user.repository';
 import { UpdateUserUseCase } from './application/update-user/update-user.use-case';
+import { DeactivateUserController } from './application/deactivate-user/deactivate-user.controller';
+import { DeactivateUserRepository } from './application/deactivate-user/deactivate-user.repository';
+import { DeactivateUserUseCase } from './application/deactivate-user/deactivate-user.use-case';
 
 @Module({
   imports: [PrismaModule],
@@ -21,6 +24,7 @@ import { UpdateUserUseCase } from './application/update-user/update-user.use-cas
   FindUserByIdController,
   ListUsersController,
   UpdateUserController,
+  DeactivateUserController,
   ],
   providers: [
   CreateUserRepository,
@@ -32,6 +36,8 @@ import { UpdateUserUseCase } from './application/update-user/update-user.use-cas
   ListUsersUseCase,
   UpdateUserRepository,
   UpdateUserUseCase,
-  ],
+  DeactivateUserRepository,
+  DeactivateUserUseCase,
+  ], 
 })
 export class UsersModule {}
