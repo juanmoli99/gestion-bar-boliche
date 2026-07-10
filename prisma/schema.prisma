@@ -1,0 +1,364 @@
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum RolUsuario {
+  ADMINISTRADOR
+  OPERADOR
+}
+
+model Usuario {
+  id             String     @id @default(uuid())
+  nombreCompleto String
+  usuario        String     @unique
+  email          String?    @unique
+  contrasenaHash String
+  rol            RolUsuario @default(OPERADOR)
+  activo         Boolean    @default(true)
+
+  creadoEn      DateTime @default(now())
+  actualizadoEn DateTime @updatedAt
+
+  movimientosStock     MovimientoStock[]
+  compras              Compra[]
+  reservasCreadas      Reserva[]             @relation("ReservasCreadas")
+  reservasActualizadas Reserva[]             @relation("ReservasActualizadas")
+  historialReservas    HistorialReserva[]
+  calculosCompraFiesta CalculoCompraFiesta[]
+
+  @@map("usuarios")
+}
+
+enum TipoInventario {
+  BAR
+  BOLICHE
+}
+
+enum TipoItem {
+  PRODUCTO
+  INSUMO
+}
+
+enum TipoMovimientoStock {
+  ENTRADA
+  SALIDA
+  AJUSTE_POSITIVO
+  AJUSTE_NEGATIVO
+  TRANSFERENCIA_ENTRADA
+  TRANSFERENCIA_SALIDA
+}
+
+model Categoria {
+  id            String   @id @default(uuid())
+  nombre        String   @unique
+  descripcion   String?
+  activa        Boolean  @default(true)
+  creadoEn      DateTime @default(now())
+  actualizadoEn DateTime @updatedAt
+
+  items Item[]
+
+  @@map("categorias")
+}
+
+model UnidadMedida {
+  id             String   @id @default(uuid())
+  nombre         String   @unique
+  abreviatura    String   @unique
+  permiteDecimal Boolean  @default(true)
+  activa         Boolean  @default(true)
+  creadoEn       DateTime @default(now())
+  actualizadoEn  DateTime @updatedAt
+
+  items Item[]
+
+  @@map("unidades_medida")
+}
+
+model Item {
+  id              String   @id @default(uuid())
+  nombre          String
+  descripcion     String?
+  tipo            TipoItem
+  categoriaId     String
+  unidadMedidaId  String
+  unidadesPorPack Int?
+  activo          Boolean  @default(true)
+  creadoEn        DateTime @default(now())
+  actualizadoEn   DateTime @updatedAt
+
+  categoria             Categoria              @relation(fields: [categoriaId], references: [id])
+  unidadMedida          UnidadMedida           @relation(fields: [unidadMedidaId], references: [id])
+  stocks                Stock[]
+  movimientos           MovimientoStock[]
+  detallesCompra        DetalleCompra[]
+  detallesFormulaCompra DetalleFormulaCompra[]
+  detallesCalculoCompra DetalleCalculoCompra[]
+
+  @@unique([nombre, tipo])
+  @@index([categoriaId])
+  @@index([unidadMedidaId])
+  @@map("items")
+}
+
+model Stock {
+  id             String         @id @default(uuid())
+  itemId         String
+  inventario     TipoInventario
+  cantidadActual Decimal        @default(0) @db.Decimal(12, 3)
+  cantidadMinima Decimal?       @db.Decimal(12, 3)
+  creadoEn       DateTime       @default(now())
+  actualizadoEn  DateTime       @updatedAt
+
+  item Item @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@unique([itemId, inventario])
+  @@index([inventario])
+  @@map("stocks")
+}
+
+model MovimientoStock {
+  id                String              @id @default(uuid())
+  itemId            String
+  inventario        TipoInventario
+  tipo              TipoMovimientoStock
+  cantidad          Decimal             @db.Decimal(12, 3)
+  cantidadAnterior  Decimal             @db.Decimal(12, 3)
+  cantidadPosterior Decimal             @db.Decimal(12, 3)
+  motivo            String?
+  usuarioId         String?
+  creadoEn          DateTime            @default(now())
+
+  item    Item     @relation(fields: [itemId], references: [id])
+  usuario Usuario? @relation(fields: [usuarioId], references: [id])
+
+  @@index([itemId])
+  @@index([inventario])
+  @@index([creadoEn])
+  @@map("movimientos_stock")
+}
+
+enum EstadoCompra {
+  BORRADOR
+  CONFIRMADA
+  CANCELADA
+}
+
+model Proveedor {
+  id            String   @id @default(uuid())
+  nombre        String
+  telefono      String?
+  email         String?
+  direccion     String?
+  observaciones String?
+  activo        Boolean  @default(true)
+  creadoEn      DateTime @default(now())
+  actualizadoEn DateTime @updatedAt
+
+  compras Compra[]
+
+  @@index([nombre])
+  @@map("proveedores")
+}
+
+model Compra {
+  id                String         @id @default(uuid())
+  proveedorId       String?
+  inventario        TipoInventario
+  estado            EstadoCompra   @default(BORRADOR)
+  fecha             DateTime       @default(now())
+  numeroComprobante String?
+  total             Decimal?       @db.Decimal(14, 2)
+  observaciones     String?
+  usuarioId         String?
+  creadoEn          DateTime       @default(now())
+  actualizadoEn     DateTime       @updatedAt
+
+  proveedor Proveedor?      @relation(fields: [proveedorId], references: [id])
+  usuario   Usuario?        @relation(fields: [usuarioId], references: [id])
+  detalles  DetalleCompra[]
+
+  @@index([proveedorId])
+  @@index([inventario])
+  @@index([fecha])
+  @@map("compras")
+}
+
+model DetalleCompra {
+  id             String   @id @default(uuid())
+  compraId       String
+  itemId         String
+  cantidad       Decimal  @db.Decimal(12, 3)
+  precioUnitario Decimal? @db.Decimal(14, 2)
+  subtotal       Decimal? @db.Decimal(14, 2)
+  creadoEn       DateTime @default(now())
+
+  compra Compra @relation(fields: [compraId], references: [id], onDelete: Cascade)
+  item   Item   @relation(fields: [itemId], references: [id])
+
+  @@unique([compraId, itemId])
+  @@index([itemId])
+  @@map("detalles_compra")
+}
+
+enum TipoReserva {
+  MESA
+  FIESTA
+}
+
+enum EstadoReserva {
+  PENDIENTE
+  SENADA
+  CONFIRMADA
+  CANCELADA
+  FINALIZADA
+  ASISTIO
+  NO_ASISTIO
+}
+
+model Reserva {
+  id                   String        @id @default(uuid())
+  tipo                 TipoReserva
+  estado               EstadoReserva @default(PENDIENTE)
+  nombreCliente        String
+  telefonoCliente      String?
+  fechaHora            DateTime
+  cantidadPersonas     Int
+  cantidadMenusSinTacc Int?
+  tipoFiesta           String?
+  observaciones        String?
+  motivoCancelacion    String?
+
+  precioTotal    Decimal?  @db.Decimal(14, 2)
+  montoSena      Decimal?  @db.Decimal(14, 2)
+  saldoPendiente Decimal?  @db.Decimal(14, 2)
+  medioPagoSena  String?
+  fechaSena      DateTime?
+  fechaPagoFinal DateTime?
+  medioPagoFinal String?
+
+  usuarioCreadorId      String?
+  usuarioActualizadorId String?
+  activa                Boolean  @default(true)
+  creadoEn              DateTime @default(now())
+  actualizadoEn         DateTime @updatedAt
+
+  usuarioCreador      Usuario? @relation("ReservasCreadas", fields: [usuarioCreadorId], references: [id])
+  usuarioActualizador Usuario? @relation("ReservasActualizadas", fields: [usuarioActualizadorId], references: [id])
+
+  historial      HistorialReserva[]
+  calculosCompra CalculoCompraFiesta[]
+
+  @@index([tipo])
+  @@index([estado])
+  @@index([fechaHora])
+  @@index([nombreCliente])
+  @@map("reservas")
+}
+
+model HistorialReserva {
+  id            String   @id @default(uuid())
+  reservaId     String
+  usuarioId     String?
+  accion        String
+  campo         String?
+  valorAnterior String?
+  valorNuevo    String?
+  creadoEn      DateTime @default(now())
+
+  reserva Reserva  @relation(fields: [reservaId], references: [id], onDelete: Cascade)
+  usuario Usuario? @relation(fields: [usuarioId], references: [id])
+
+  @@index([reservaId])
+  @@index([usuarioId])
+  @@index([creadoEn])
+  @@map("historial_reservas")
+}
+
+enum EstadoCalculoCompra {
+  BORRADOR
+  CONFIRMADO
+  COMPRA_REALIZADA
+}
+
+model FormulaCompra {
+  id            String   @id @default(uuid())
+  nombre        String
+  descripcion   String?
+  activa        Boolean  @default(true)
+  creadoEn      DateTime @default(now())
+  actualizadoEn DateTime @updatedAt
+
+  detalles DetalleFormulaCompra[]
+  calculos CalculoCompraFiesta[]
+
+  @@unique([nombre])
+  @@map("formulas_compra")
+}
+
+model DetalleFormulaCompra {
+  id                 String   @id @default(uuid())
+  formulaId          String
+  itemId             String
+  cantidadReferencia Decimal  @db.Decimal(12, 3)
+  personasReferencia Int
+  unidadesPorPack    Int?
+  observaciones      String?
+  creadoEn           DateTime @default(now())
+  actualizadoEn      DateTime @updatedAt
+
+  formula FormulaCompra @relation(fields: [formulaId], references: [id], onDelete: Cascade)
+  item    Item          @relation(fields: [itemId], references: [id])
+
+  @@unique([formulaId, itemId])
+  @@index([itemId])
+  @@map("detalles_formulas_compra")
+}
+
+model CalculoCompraFiesta {
+  id               String              @id @default(uuid())
+  reservaId        String
+  formulaId        String?
+  cantidadPersonas Int
+  estado           EstadoCalculoCompra @default(BORRADOR)
+  observaciones    String?
+  usuarioId        String?
+  creadoEn         DateTime            @default(now())
+  actualizadoEn    DateTime            @updatedAt
+
+  reserva  Reserva                @relation(fields: [reservaId], references: [id], onDelete: Cascade)
+  formula  FormulaCompra?         @relation(fields: [formulaId], references: [id])
+  usuario  Usuario?               @relation(fields: [usuarioId], references: [id])
+  detalles DetalleCalculoCompra[]
+
+  @@index([reservaId])
+  @@index([formulaId])
+  @@index([estado])
+  @@map("calculos_compra_fiesta")
+}
+
+model DetalleCalculoCompra {
+  id                     String   @id @default(uuid())
+  calculoId              String
+  itemId                 String
+  cantidadCalculada      Decimal  @db.Decimal(12, 3)
+  cantidadAjustada       Decimal? @db.Decimal(12, 3)
+  cantidadComprada       Decimal? @db.Decimal(12, 3)
+  cantidadPacksCalculada Decimal? @db.Decimal(12, 3)
+  unidadesPorPack        Int?
+  creadoEn               DateTime @default(now())
+  actualizadoEn          DateTime @updatedAt
+
+  calculo CalculoCompraFiesta @relation(fields: [calculoId], references: [id], onDelete: Cascade)
+  item    Item                @relation(fields: [itemId], references: [id])
+
+  @@unique([calculoId, itemId])
+  @@index([itemId])
+  @@map("detalles_calculos_compra")
+}
