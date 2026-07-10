@@ -15,6 +15,10 @@ import { ListItemsController } from './application/list-items/list-items.control
 import { ListItemsRepository } from './application/list-items/list-items.repository';
 import { ListItemsService } from './application/list-items/list-items.service';
 import { ListItemsUseCase } from './application/list-items/list-items.use-case';
+import { DeactivateItemController } from './application/deactivate-item/deactivate-item.controller';
+import { DeactivateItemRepository } from './application/deactivate-item/deactivate-item.repository';
+import { DeactivateItemService } from './application/deactivate-item/deactivate-item.service';
+import { DeactivateItemUseCase } from './application/deactivate-item/deactivate-item.use-case';
 
 @Module({
   controllers: [
@@ -22,6 +26,7 @@ import { ListItemsUseCase } from './application/list-items/list-items.use-case';
   ListItemsController,
   FindItemByIdController,
   UpdateItemController,
+  DeactivateItemController,
 ],
   providers: [
   CreateItemRepository,
@@ -39,6 +44,10 @@ import { ListItemsUseCase } from './application/list-items/list-items.use-case';
   UpdateItemRepository,
   UpdateItemService,
   UpdateItemUseCase,
+
+  DeactivateItemRepository,
+  DeactivateItemService,
+  DeactivateItemUseCase,
 ],
 })
 export class InventoryModule {}
