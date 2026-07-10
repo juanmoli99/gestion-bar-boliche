@@ -1,10 +1,15 @@
 import { Module } from '@nestjs/common';
-import { AuthModule } from './modules/auth/auth.module';
+import { APP_GUARD } from '@nestjs/core';
+import { InventoryModule } from './modules/inventory/inventory.module';
 import { ConfigModule } from './core/config/config.module';
 import { PrismaModule } from './core/database/prisma.module';
 import { HealthModule } from './core/health/health.module';
 
+import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
+
+import { JwtAuthGuard } from './shared/guards/jwt-auth.guard';
+import { RolesGuard } from './shared/guards/roles.guard';
 
 @Module({
   imports: [
@@ -13,6 +18,17 @@ import { UsersModule } from './modules/users/users.module';
   HealthModule,
   UsersModule,
   AuthModule,
+  InventoryModule,
+  ],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
   ],
 })
 export class AppModule {}
