@@ -1,10 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../../core/database/prisma.service';
-import { TipoItem } from '../../../../generated/prisma/enums';
+
+import {
+  TipoInventario,
+  TipoItem,
+} from '../../../../generated/prisma/enums';
 
 interface CreateItemData {
   nombre: string;
   descripcion?: string;
+  inventario: TipoInventario;
   tipo: TipoItem;
   categoriaId: string;
   unidadMedidaId: string;
@@ -17,7 +22,7 @@ export class CreateItemRepository {
     private readonly prisma: PrismaService,
   ) {}
 
-  async existsByName(
+  async exists(
     nombre: string,
     tipo: TipoItem,
   ): Promise<boolean> {
@@ -34,38 +39,33 @@ export class CreateItemRepository {
     return item !== null;
   }
 
-  async categoriaExiste(id: string): Promise<boolean> {
-    const categoria = await this.prisma.categoria.findUnique({
-      where: { id },
-      select: { id: true },
+  async categoriaPerteneceAlInventario(
+    categoriaId: string,
+    inventario: TipoInventario,
+  ): Promise<boolean> {
+    const categoria = await this.prisma.categoria.findFirst({
+      where: {
+        id: categoriaId,
+        inventario,
+        activa: true,
+      },
+      select: {
+        id: true,
+      },
     });
 
     return categoria !== null;
   }
 
-  async unidadMedidaExiste(id: string): Promise<boolean> {
-    const unidad = await this.prisma.unidadMedida.findUnique({
-      where: { id },
-      select: { id: true },
-    });
-
-    return unidad !== null;
-  }
-
   async create(data: CreateItemData) {
     return this.prisma.item.create({
-      data,
-      select: {
-        id: true,
-        nombre: true,
-        descripcion: true,
-        tipo: true,
-        categoriaId: true,
-        unidadMedidaId: true,
-        unidadesPorPack: true,
-        activo: true,
-        creadoEn: true,
-        actualizadoEn: true,
+      data: {
+        nombre: data.nombre,
+        descripcion: data.descripcion,
+        tipo: data.tipo,
+        categoriaId: data.categoriaId,
+        unidadMedidaId: data.unidadMedidaId,
+        unidadesPorPack: data.unidadesPorPack,
       },
     });
   }

@@ -17,10 +17,8 @@ export class CreateItemUseCase {
   async execute(
     request: CreateItemRequestDto,
   ): Promise<CreateItemResponseDto> {
-    const nombre = request.nombre.trim();
-
-    const existe = await this.repository.existsByName(
-      nombre,
+    const existe = await this.repository.exists(
+      request.nombre.trim(),
       request.tipo,
     );
 
@@ -30,29 +28,22 @@ export class CreateItemUseCase {
       );
     }
 
-    const categoriaExiste = await this.repository.categoriaExiste(
-      request.categoriaId,
-    );
-
-    if (!categoriaExiste) {
-      throw new NotFoundException(
-        'La categoría no existe.',
+    const categoriaValida =
+      await this.repository.categoriaPerteneceAlInventario(
+        request.categoriaId,
+        request.inventario,
       );
-    }
 
-    const unidadExiste = await this.repository.unidadMedidaExiste(
-      request.unidadMedidaId,
-    );
-
-    if (!unidadExiste) {
+    if (!categoriaValida) {
       throw new NotFoundException(
-        'La unidad de medida no existe.',
+        'La categoría no pertenece al inventario seleccionado.',
       );
     }
 
     return this.repository.create({
-      nombre,
+      nombre: request.nombre.trim(),
       descripcion: request.descripcion?.trim(),
+      inventario: request.inventario,
       tipo: request.tipo,
       categoriaId: request.categoriaId,
       unidadMedidaId: request.unidadMedidaId,

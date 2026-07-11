@@ -8,17 +8,23 @@ import {
   Min,
 } from 'class-validator';
 
-import { TipoItem } from '../../../../../generated/prisma/enums';
+import {
+  TipoInventario,
+  TipoItem,
+} from '../../../../../generated/prisma/enums';
 
 export class CreateItemRequestDto {
   @IsString()
-  @MaxLength(150)
+  @MaxLength(100)
   nombre!: string;
 
   @IsOptional()
   @IsString()
   @MaxLength(500)
   descripcion?: string;
+
+  @IsEnum(TipoInventario)
+  inventario!: TipoInventario;
 
   @IsEnum(TipoItem)
   tipo!: TipoItem;
