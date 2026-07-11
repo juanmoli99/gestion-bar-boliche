@@ -43,12 +43,17 @@ import { CreateStockMovementController } from './application/create-stock-moveme
 import { CreateStockMovementRepository } from './application/create-stock-movement/create-stock-movement.repository';
 import { CreateStockMovementService } from './application/create-stock-movement/create-stock-movement.service';
 import { CreateStockMovementUseCase } from './application/create-stock-movement/create-stock-movement.use-case';
+import { ListStockMovementsController } from './application/list-stock-movements/list-stock-movements.controller';
+import { ListStockMovementsRepository } from './application/list-stock-movements/list-stock-movements.repository';
+import { ListStockMovementsService } from './application/list-stock-movements/list-stock-movements.service';
+import { ListStockMovementsUseCase } from './application/list-stock-movements/list-stock-movements.use-case';
 
 @Module({
   controllers: [
   CreateItemController,
   CreateStockController,
   CreateStockMovementController,
+  ListStockMovementsController,
   UpdateStockController,
   FindStockByIdController,
   ReactivateItemController,
@@ -103,6 +108,10 @@ import { CreateStockMovementUseCase } from './application/create-stock-movement/
   CreateStockMovementRepository,
   CreateStockMovementService,
   CreateStockMovementUseCase,
+
+  ListStockMovementsRepository,
+  ListStockMovementsService,
+  ListStockMovementsUseCase,
 ],
 })
 export class InventoryModule {}
