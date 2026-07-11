@@ -23,12 +23,17 @@ import { ReactivateItemController } from './application/reactivate-item/reactiva
 import { ReactivateItemRepository } from './application/reactivate-item/reactivate-item.repository';
 import { ReactivateItemService } from './application/reactivate-item/reactivate-item.service';
 import { ReactivateItemUseCase } from './application/reactivate-item/reactivate-item.use-case';
-
+import { CreateStockController } from './application/create-stock/create-stock.controller';
+import { CreateStockRepository } from './application/create-stock/create-stock.repository';
+import { CreateStockService } from './application/create-stock/create-stock.service';
+import { CreateStockUseCase } from './application/create-stock/create-stock.use-case';
 
 @Module({
   controllers: [
   CreateItemController,
+  CreateStockController,
   ReactivateItemController,
+
   ListItemsController,
   FindItemByIdController,
   UpdateItemController,
@@ -58,6 +63,11 @@ import { ReactivateItemUseCase } from './application/reactivate-item/reactivate-
   ReactivateItemRepository,
   ReactivateItemService,
   ReactivateItemUseCase,
+
+  CreateStockRepository,
+  CreateStockService,
+  CreateStockUseCase,
+
 ],
 })
 export class InventoryModule {}
