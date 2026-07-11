@@ -35,11 +35,16 @@ import { FindStockByIdController } from './application/find-stock-by-id/find-sto
 import { FindStockByIdRepository } from './application/find-stock-by-id/find-stock-by-id.repository';
 import { FindStockByIdService } from './application/find-stock-by-id/find-stock-by-id.service';
 import { FindStockByIdUseCase } from './application/find-stock-by-id/find-stock-by-id.use-case';
+import { UpdateStockController } from './application/update-stock/update-stock.controller';
+import { UpdateStockRepository } from './application/update-stock/update-stock.repository';
+import { UpdateStockService } from './application/update-stock/update-stock.service';
+import { UpdateStockUseCase } from './application/update-stock/update-stock.use-case';
 
 @Module({
   controllers: [
   CreateItemController,
   CreateStockController,
+  UpdateStockController,
   FindStockByIdController,
   ReactivateItemController,
 
@@ -85,6 +90,10 @@ import { FindStockByIdUseCase } from './application/find-stock-by-id/find-stock-
   FindStockByIdRepository,
   FindStockByIdService,
   FindStockByIdUseCase,
+
+  UpdateStockRepository,
+  UpdateStockService,
+  UpdateStockUseCase,
 ],
 })
 export class InventoryModule {}
