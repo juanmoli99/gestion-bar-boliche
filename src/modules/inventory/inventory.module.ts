@@ -39,11 +39,16 @@ import { UpdateStockController } from './application/update-stock/update-stock.c
 import { UpdateStockRepository } from './application/update-stock/update-stock.repository';
 import { UpdateStockService } from './application/update-stock/update-stock.service';
 import { UpdateStockUseCase } from './application/update-stock/update-stock.use-case';
+import { CreateStockMovementController } from './application/create-stock-movement/create-stock-movement.controller';
+import { CreateStockMovementRepository } from './application/create-stock-movement/create-stock-movement.repository';
+import { CreateStockMovementService } from './application/create-stock-movement/create-stock-movement.service';
+import { CreateStockMovementUseCase } from './application/create-stock-movement/create-stock-movement.use-case';
 
 @Module({
   controllers: [
   CreateItemController,
   CreateStockController,
+  CreateStockMovementController,
   UpdateStockController,
   FindStockByIdController,
   ReactivateItemController,
@@ -94,6 +99,10 @@ import { UpdateStockUseCase } from './application/update-stock/update-stock.use-
   UpdateStockRepository,
   UpdateStockService,
   UpdateStockUseCase,
+
+  CreateStockMovementRepository,
+  CreateStockMovementService,
+  CreateStockMovementUseCase,
 ],
 })
 export class InventoryModule {}
