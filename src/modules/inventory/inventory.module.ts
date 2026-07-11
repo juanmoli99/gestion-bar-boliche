@@ -59,6 +59,10 @@ import { ListCategoriesController } from './application/list-categories/list-cat
 import { ListCategoriesRepository } from './application/list-categories/list-categories.repository';
 import { ListCategoriesService } from './application/list-categories/list-categories.service';
 import { ListCategoriesUseCase } from './application/list-categories/list-categories.use-case';
+import { ListCategoriesByInventoryController } from './application/list-categories-by-inventory/list-categories-by-inventory.controller';
+import { ListCategoriesByInventoryRepository } from './application/list-categories-by-inventory/list-categories-by-inventory.repository';
+import { ListCategoriesByInventoryService } from './application/list-categories-by-inventory/list-categories-by-inventory.service';
+import { ListCategoriesByInventoryUseCase } from './application/list-categories-by-inventory/list-categories-by-inventory.use-case';
 
 @Module({
   controllers: [
@@ -77,6 +81,7 @@ import { ListCategoriesUseCase } from './application/list-categories/list-catego
   UpdateItemController,
   DeactivateItemController,
   ListStockController,
+  ListCategoriesByInventoryController,
 ],
   providers: [
   CreateItemRepository,
@@ -134,10 +139,14 @@ import { ListCategoriesUseCase } from './application/list-categories/list-catego
   CreateCategoryRepository,
   CreateCategoryService,
   CreateCategoryUseCase,
-  
+
   ListCategoriesRepository,
   ListCategoriesService,
   ListCategoriesUseCase,
+
+  ListCategoriesByInventoryRepository,
+  ListCategoriesByInventoryService,
+  ListCategoriesByInventoryUseCase,
 ],
 })
 export class InventoryModule {}
