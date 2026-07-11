@@ -55,6 +55,10 @@ import { CreateCategoryController } from './application/create-category/create-c
 import { CreateCategoryRepository } from './application/create-category/create-category.repository';
 import { CreateCategoryService } from './application/create-category/create-category.service';
 import { CreateCategoryUseCase } from './application/create-category/create-category.use-case';
+import { ListCategoriesController } from './application/list-categories/list-categories.controller';
+import { ListCategoriesRepository } from './application/list-categories/list-categories.repository';
+import { ListCategoriesService } from './application/list-categories/list-categories.service';
+import { ListCategoriesUseCase } from './application/list-categories/list-categories.use-case';
 
 @Module({
   controllers: [
@@ -67,6 +71,7 @@ import { CreateCategoryUseCase } from './application/create-category/create-cate
   ReactivateItemController,
   FindStockMovementByIdController,
   CreateCategoryController,
+  ListCategoriesController,
   ListItemsController,
   FindItemByIdController,
   UpdateItemController,
@@ -129,6 +134,10 @@ import { CreateCategoryUseCase } from './application/create-category/create-cate
   CreateCategoryRepository,
   CreateCategoryService,
   CreateCategoryUseCase,
+  
+  ListCategoriesRepository,
+  ListCategoriesService,
+  ListCategoriesUseCase,
 ],
 })
 export class InventoryModule {}
