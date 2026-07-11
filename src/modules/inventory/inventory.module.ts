@@ -67,6 +67,10 @@ import { CreateUnitController } from './application/create-unit/create-unit.cont
 import { CreateUnitRepository } from './application/create-unit/create-unit.repository';
 import { CreateUnitService } from './application/create-unit/create-unit.service';
 import { CreateUnitUseCase } from './application/create-unit/create-unit.use-case';
+import { ListUnitsController } from './application/list-units/list-units.controller';
+import { ListUnitsRepository } from './application/list-units/list-units.repository';
+import { ListUnitsService } from './application/list-units/list-units.service';
+import { ListUnitsUseCase } from './application/list-units/list-units.use-case';
 
 @Module({
   controllers: [
@@ -87,6 +91,7 @@ import { CreateUnitUseCase } from './application/create-unit/create-unit.use-cas
   ListStockController,
   ListCategoriesByInventoryController,
   CreateUnitController,
+  ListUnitsController,
 ],
   providers: [
   CreateItemRepository,
@@ -152,10 +157,14 @@ import { CreateUnitUseCase } from './application/create-unit/create-unit.use-cas
   ListCategoriesByInventoryRepository,
   ListCategoriesByInventoryService,
   ListCategoriesByInventoryUseCase,
-  
+
   CreateUnitRepository,
   CreateUnitService,
   CreateUnitUseCase,
+
+  ListUnitsRepository,
+  ListUnitsService,
+  ListUnitsUseCase,
 ],
 })
 export class InventoryModule {}
