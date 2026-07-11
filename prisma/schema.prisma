@@ -36,8 +36,10 @@ model Usuario {
 }
 
 enum TipoInventario {
-  BAR
-  BOLICHE
+  BEBIDAS
+  COCINA
+  LIMPIEZA
+  VARIOS
 }
 
 enum TipoItem {
@@ -55,15 +57,18 @@ enum TipoMovimientoStock {
 }
 
 model Categoria {
-  id            String   @id @default(uuid())
-  nombre        String   @unique
+  id            String         @id @default(uuid())
+  nombre        String
   descripcion   String?
-  activa        Boolean  @default(true)
-  creadoEn      DateTime @default(now())
-  actualizadoEn DateTime @updatedAt
+  inventario    TipoInventario
+  activa        Boolean        @default(true)
+  creadoEn      DateTime       @default(now())
+  actualizadoEn DateTime       @updatedAt
 
   items Item[]
 
+  @@unique([nombre, inventario])
+  @@index([inventario])
   @@map("categorias")
 }
 

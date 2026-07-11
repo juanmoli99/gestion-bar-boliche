@@ -2,7 +2,7 @@
 CREATE TYPE "RolUsuario" AS ENUM ('ADMINISTRADOR', 'OPERADOR');
 
 -- CreateEnum
-CREATE TYPE "TipoInventario" AS ENUM ('BAR', 'BOLICHE');
+CREATE TYPE "TipoInventario" AS ENUM ('BEBIDAS', 'COCINA', 'LIMPIEZA', 'VARIOS');
 
 -- CreateEnum
 CREATE TYPE "TipoItem" AS ENUM ('PRODUCTO', 'INSUMO');
@@ -42,6 +42,7 @@ CREATE TABLE "categorias" (
     "id" TEXT NOT NULL,
     "nombre" TEXT NOT NULL,
     "descripcion" TEXT,
+    "inventario" "TipoInventario" NOT NULL,
     "activa" BOOLEAN NOT NULL DEFAULT true,
     "creadoEn" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "actualizadoEn" TIMESTAMP(3) NOT NULL,
@@ -260,7 +261,10 @@ CREATE UNIQUE INDEX "usuarios_usuario_key" ON "usuarios"("usuario");
 CREATE UNIQUE INDEX "usuarios_email_key" ON "usuarios"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "categorias_nombre_key" ON "categorias"("nombre");
+CREATE INDEX "categorias_inventario_idx" ON "categorias"("inventario");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "categorias_nombre_inventario_key" ON "categorias"("nombre", "inventario");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "unidades_medida_nombre_key" ON "unidades_medida"("nombre");
