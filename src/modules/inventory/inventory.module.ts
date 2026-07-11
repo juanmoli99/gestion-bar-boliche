@@ -51,6 +51,10 @@ import { FindStockMovementByIdController } from './application/find-stock-moveme
 import { FindStockMovementByIdRepository } from './application/find-stock-movement-by-id/find-stock-movement-by-id.repository';
 import { FindStockMovementByIdService } from './application/find-stock-movement-by-id/find-stock-movement-by-id.service';
 import { FindStockMovementByIdUseCase } from './application/find-stock-movement-by-id/find-stock-movement-by-id.use-case';
+import { CreateCategoryController } from './application/create-category/create-category.controller';
+import { CreateCategoryRepository } from './application/create-category/create-category.repository';
+import { CreateCategoryService } from './application/create-category/create-category.service';
+import { CreateCategoryUseCase } from './application/create-category/create-category.use-case';
 
 @Module({
   controllers: [
@@ -62,7 +66,7 @@ import { FindStockMovementByIdUseCase } from './application/find-stock-movement-
   FindStockByIdController,
   ReactivateItemController,
   FindStockMovementByIdController,
-
+  CreateCategoryController,
   ListItemsController,
   FindItemByIdController,
   UpdateItemController,
@@ -121,6 +125,10 @@ import { FindStockMovementByIdUseCase } from './application/find-stock-movement-
   FindStockMovementByIdRepository,
   FindStockMovementByIdService,
   FindStockMovementByIdUseCase,
+
+  CreateCategoryRepository,
+  CreateCategoryService,
+  CreateCategoryUseCase,
 ],
 })
 export class InventoryModule {}

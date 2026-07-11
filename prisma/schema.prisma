@@ -57,15 +57,16 @@ enum TipoMovimientoStock {
 }
 
 model Categoria {
-  id            String         @id @default(uuid())
+  id            String           @id @default(uuid())
   nombre        String
   descripcion   String?
   inventario    TipoInventario
-  activa        Boolean        @default(true)
-  creadoEn      DateTime       @default(now())
-  actualizadoEn DateTime       @updatedAt
+  activa        Boolean          @default(true)
 
-  items Item[]
+  creadoEn      DateTime         @default(now())
+  actualizadoEn DateTime         @updatedAt
+
+  items         Item[]
 
   @@unique([nombre, inventario])
   @@index([inventario])
