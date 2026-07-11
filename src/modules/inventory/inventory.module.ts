@@ -27,6 +27,11 @@ import { CreateStockController } from './application/create-stock/create-stock.c
 import { CreateStockRepository } from './application/create-stock/create-stock.repository';
 import { CreateStockService } from './application/create-stock/create-stock.service';
 import { CreateStockUseCase } from './application/create-stock/create-stock.use-case';
+import { ListStockController } from './application/list-stock/list-stock.controller';
+import { ListStockRepository } from './application/list-stock/list-stock.repository';
+import { ListStockService } from './application/list-stock/list-stock.service';
+import { ListStockUseCase } from './application/list-stock/list-stock.use-case';
+
 
 @Module({
   controllers: [
@@ -38,6 +43,7 @@ import { CreateStockUseCase } from './application/create-stock/create-stock.use-
   FindItemByIdController,
   UpdateItemController,
   DeactivateItemController,
+  ListStockController,
 ],
   providers: [
   CreateItemRepository,
@@ -68,6 +74,9 @@ import { CreateStockUseCase } from './application/create-stock/create-stock.use-
   CreateStockService,
   CreateStockUseCase,
 
+  ListStockRepository,
+  ListStockService,
+  ListStockUseCase,
 ],
 })
 export class InventoryModule {}
