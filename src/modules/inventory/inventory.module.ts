@@ -47,6 +47,10 @@ import { ListStockMovementsController } from './application/list-stock-movements
 import { ListStockMovementsRepository } from './application/list-stock-movements/list-stock-movements.repository';
 import { ListStockMovementsService } from './application/list-stock-movements/list-stock-movements.service';
 import { ListStockMovementsUseCase } from './application/list-stock-movements/list-stock-movements.use-case';
+import { FindStockMovementByIdController } from './application/find-stock-movement-by-id/find-stock-movement-by-id.controller';
+import { FindStockMovementByIdRepository } from './application/find-stock-movement-by-id/find-stock-movement-by-id.repository';
+import { FindStockMovementByIdService } from './application/find-stock-movement-by-id/find-stock-movement-by-id.service';
+import { FindStockMovementByIdUseCase } from './application/find-stock-movement-by-id/find-stock-movement-by-id.use-case';
 
 @Module({
   controllers: [
@@ -57,6 +61,7 @@ import { ListStockMovementsUseCase } from './application/list-stock-movements/li
   UpdateStockController,
   FindStockByIdController,
   ReactivateItemController,
+  FindStockMovementByIdController,
 
   ListItemsController,
   FindItemByIdController,
@@ -112,6 +117,10 @@ import { ListStockMovementsUseCase } from './application/list-stock-movements/li
   ListStockMovementsRepository,
   ListStockMovementsService,
   ListStockMovementsUseCase,
+
+  FindStockMovementByIdRepository,
+  FindStockMovementByIdService,
+  FindStockMovementByIdUseCase,
 ],
 })
 export class InventoryModule {}
