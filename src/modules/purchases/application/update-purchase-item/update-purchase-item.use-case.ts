@@ -6,6 +6,7 @@ import {
 
 import { EstadoCompra } from '../../../../generated/prisma/enums';
 
+import { RecalculatePurchaseTotalsService } from '../recalculate-purchase-totals/recalculate-purchase-totals.service';
 import { UpdatePurchaseItemRepository } from './update-purchase-item.repository';
 import { UpdatePurchaseItemRequestDto } from './dto/update-purchase-item.request.dto';
 import { UpdatePurchaseItemResponseDto } from './dto/update-purchase-item.response.dto';
@@ -14,33 +15,38 @@ import { UpdatePurchaseItemResponseDto } from './dto/update-purchase-item.respon
 export class UpdatePurchaseItemUseCase {
   constructor(
     private readonly repository: UpdatePurchaseItemRepository,
+    private readonly recalculatePurchaseTotalsService: RecalculatePurchaseTotalsService,
   ) {}
 
   async execute(
     id: string,
     request: UpdatePurchaseItemRequestDto,
   ): Promise<UpdatePurchaseItemResponseDto> {
-    const detail = await this.repository.findDetail(id);
+    const existingDetail = await this.repository.findDetail(id);
 
-    if (!detail) {
+    if (!existingDetail) {
       throw new NotFoundException(
         'El detalle de compra no existe.',
       );
     }
 
-    if (detail.compra.estado !== EstadoCompra.BORRADOR) {
+    if (existingDetail.compra.estado !== EstadoCompra.BORRADOR) {
       throw new BadRequestException(
         'Solo se pueden modificar compras en estado BORRADOR.',
       );
     }
 
-    return this.repository.update(id, {
+    const updatedDetail = await this.repository.update(id, {
       cantidad: request.cantidad,
       precioUnitario: request.precioUnitario,
-      porcentajeDescuento:
-        request.porcentajeDescuento,
-      porcentajeIva:
-        request.porcentajeIva,
+      porcentajeDescuento: request.porcentajeDescuento,
+      porcentajeIva: request.porcentajeIva,
     });
+
+    await this.recalculatePurchaseTotalsService.execute(
+      updatedDetail.compraId,
+    );
+
+    return updatedDetail;
   }
 }

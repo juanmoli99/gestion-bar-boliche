@@ -20,6 +20,9 @@ import { DeletePurchaseItemController } from './application/delete-purchase-item
 import { DeletePurchaseItemRepository } from './application/delete-purchase-item/delete-purchase-item.repository';
 import { DeletePurchaseItemService } from './application/delete-purchase-item/delete-purchase-item.service';
 import { DeletePurchaseItemUseCase } from './application/delete-purchase-item/delete-purchase-item.use-case';
+import { RecalculatePurchaseTotalsRepository } from './application/recalculate-purchase-totals/recalculate-purchase-totals.repository';
+import { RecalculatePurchaseTotalsService } from './application/recalculate-purchase-totals/recalculate-purchase-totals.service';
+import { RecalculatePurchaseTotalsUseCase } from './application/recalculate-purchase-totals/recalculate-purchase-totals.use-case';
 
 @Module({
   imports: [
@@ -48,6 +51,9 @@ import { DeletePurchaseItemUseCase } from './application/delete-purchase-item/de
     DeletePurchaseItemRepository,
     DeletePurchaseItemService,
     DeletePurchaseItemUseCase,
+    RecalculatePurchaseTotalsRepository,
+    RecalculatePurchaseTotalsService,
+    RecalculatePurchaseTotalsUseCase,
   ],
 })
 export class PurchasesModule {}

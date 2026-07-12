@@ -5,13 +5,14 @@ import {
 } from '@nestjs/common';
 
 import { EstadoCompra } from '../../../../generated/prisma/enums';
-
+import { RecalculatePurchaseTotalsService } from '../recalculate-purchase-totals/recalculate-purchase-totals.service';
 import { DeletePurchaseItemRepository } from './delete-purchase-item.repository';
 
 @Injectable()
 export class DeletePurchaseItemUseCase {
   constructor(
     private readonly repository: DeletePurchaseItemRepository,
+    private readonly recalculatePurchaseTotalsService: RecalculatePurchaseTotalsService,
   ) {}
 
   async execute(id: string): Promise<void> {
@@ -34,5 +35,8 @@ export class DeletePurchaseItemUseCase {
     }
 
     await this.repository.delete(id);
+    await this.recalculatePurchaseTotalsService.execute(
+    detail.compraId,
+);
   }
 }

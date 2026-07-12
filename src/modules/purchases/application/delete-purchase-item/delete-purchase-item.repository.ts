@@ -13,6 +13,7 @@ export class DeletePurchaseItemRepository {
       where: { id },
       select: {
         id: true,
+        compraId: true,
         compra: {
           select: {
             estado: true,
@@ -22,11 +23,9 @@ export class DeletePurchaseItemRepository {
     });
   }
 
-  async delete(id: string) {
+  async delete(id: string): Promise<void> {
     await this.prisma.compraDetalle.delete({
-      where: {
-        id,
-      },
+      where: { id },
     });
   }
 }
