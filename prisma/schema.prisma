@@ -57,16 +57,16 @@ enum TipoMovimientoStock {
 }
 
 model Categoria {
-  id            String           @id @default(uuid())
-  nombre        String
-  descripcion   String?
-  inventario    TipoInventario
-  activa        Boolean          @default(true)
+  id          String         @id @default(uuid())
+  nombre      String
+  descripcion String?
+  inventario  TipoInventario
+  activa      Boolean        @default(true)
 
-  creadoEn      DateTime         @default(now())
-  actualizadoEn DateTime         @updatedAt
+  creadoEn      DateTime @default(now())
+  actualizadoEn DateTime @updatedAt
 
-  items         Item[]
+  items Item[]
 
   @@unique([nombre, inventario])
   @@index([inventario])
@@ -157,19 +157,29 @@ enum EstadoCompra {
 }
 
 model Proveedor {
-  id            String   @id @default(uuid())
-  nombre        String
-  telefono      String?
-  email         String?
-  direccion     String?
+  id String @id @default(uuid())
+
+  razonSocial     String
+  nombreComercial String?
+
+  cuit String @unique
+
+  telefono String?
+  email    String?
+
+  direccion    String?
+  ciudad       String?
+  provincia    String?
+  codigoPostal String?
+
   observaciones String?
-  activo        Boolean  @default(true)
+
+  activo Boolean @default(true)
+
   creadoEn      DateTime @default(now())
   actualizadoEn DateTime @updatedAt
+  compras       Compra[]
 
-  compras Compra[]
-
-  @@index([nombre])
   @@map("proveedores")
 }
 

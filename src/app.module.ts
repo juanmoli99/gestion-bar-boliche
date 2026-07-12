@@ -4,7 +4,7 @@ import { InventoryModule } from './modules/inventory/inventory.module';
 import { ConfigModule } from './core/config/config.module';
 import { PrismaModule } from './core/database/prisma.module';
 import { HealthModule } from './core/health/health.module';
-
+import { SuppliersModule } from './modules/suppliers/suppliers.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
 
@@ -19,6 +19,7 @@ import { RolesGuard } from './shared/guards/roles.guard';
   UsersModule,
   AuthModule,
   InventoryModule,
+  SuppliersModule,
   ],
   providers: [
     {
