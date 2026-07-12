@@ -150,12 +150,6 @@ model MovimientoStock {
   @@map("movimientos_stock")
 }
 
-enum EstadoCompra {
-  BORRADOR
-  CONFIRMADA
-  CANCELADA
-}
-
 model Proveedor {
   id String @id @default(uuid())
 
@@ -183,26 +177,30 @@ model Proveedor {
   @@map("proveedores")
 }
 
+enum EstadoCompra {
+  BORRADOR
+  CONFIRMADA
+  ANULADA
+}
+
 model Compra {
-  id                String         @id @default(uuid())
-  proveedorId       String?
-  inventario        TipoInventario
-  estado            EstadoCompra   @default(BORRADOR)
-  fecha             DateTime       @default(now())
+  id String @id @default(uuid())
+
+  proveedorId String
+  proveedor   Proveedor @relation(fields: [proveedorId], references: [id])
+
   numeroComprobante String?
-  total             Decimal?       @db.Decimal(14, 2)
   observaciones     String?
-  usuarioId         String?
-  creadoEn          DateTime       @default(now())
-  actualizadoEn     DateTime       @updatedAt
 
-  proveedor Proveedor?      @relation(fields: [proveedorId], references: [id])
-  usuario   Usuario?        @relation(fields: [usuarioId], references: [id])
-  detalles  DetalleCompra[]
+  estado EstadoCompra @default(BORRADOR)
 
-  @@index([proveedorId])
-  @@index([inventario])
-  @@index([fecha])
+  creadoEn       DateTime        @default(now())
+  actualizadoEn  DateTime        @updatedAt
+  usuario        Usuario?        @relation(fields: [usuarioId], references: [id])
+  usuarioId      String?
+  detalleCompras DetalleCompra[]
+  inventario     TipoInventario
+
   @@map("compras")
 }
 

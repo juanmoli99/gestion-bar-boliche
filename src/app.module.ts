@@ -7,7 +7,7 @@ import { HealthModule } from './core/health/health.module';
 import { SuppliersModule } from './modules/suppliers/suppliers.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
-
+import { PurchasesModule } from './modules/purchases/purchases.module';
 import { JwtAuthGuard } from './shared/guards/jwt-auth.guard';
 import { RolesGuard } from './shared/guards/roles.guard';
 
@@ -20,6 +20,7 @@ import { RolesGuard } from './shared/guards/roles.guard';
   AuthModule,
   InventoryModule,
   SuppliersModule,
+  PurchasesModule,
   ],
   providers: [
     {
