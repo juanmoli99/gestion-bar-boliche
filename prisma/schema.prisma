@@ -103,7 +103,7 @@ model Item {
   unidadMedida          UnidadMedida           @relation(fields: [unidadMedidaId], references: [id])
   stocks                Stock[]
   movimientos           MovimientoStock[]
-  detallesCompra        DetalleCompra[]
+  comprasDetalle        CompraDetalle[]
   detallesFormulaCompra DetalleFormulaCompra[]
   detallesCalculoCompra DetalleCalculoCompra[]
 
@@ -194,31 +194,37 @@ model Compra {
 
   estado EstadoCompra @default(BORRADOR)
 
-  creadoEn       DateTime        @default(now())
-  actualizadoEn  DateTime        @updatedAt
-  usuario        Usuario?        @relation(fields: [usuarioId], references: [id])
-  usuarioId      String?
-  detalleCompras DetalleCompra[]
-  inventario     TipoInventario
+  creadoEn      DateTime        @default(now())
+  actualizadoEn DateTime        @updatedAt
+  usuario       Usuario?        @relation(fields: [usuarioId], references: [id])
+  usuarioId     String?
+  detalles      CompraDetalle[]
+  inventario    TipoInventario
 
   @@map("compras")
 }
 
-model DetalleCompra {
-  id             String   @id @default(uuid())
-  compraId       String
-  itemId         String
-  cantidad       Decimal  @db.Decimal(12, 3)
-  precioUnitario Decimal? @db.Decimal(14, 2)
-  subtotal       Decimal? @db.Decimal(14, 2)
-  creadoEn       DateTime @default(now())
+model CompraDetalle {
+  id String @id @default(uuid())
 
-  compra Compra @relation(fields: [compraId], references: [id], onDelete: Cascade)
+  compraId String
+  compra   Compra @relation(fields: [compraId], references: [id], onDelete: Cascade)
+
+  itemId String
   item   Item   @relation(fields: [itemId], references: [id])
 
-  @@unique([compraId, itemId])
-  @@index([itemId])
-  @@map("detalles_compra")
+  cantidad Decimal @db.Decimal(12, 3)
+
+  precioUnitario Decimal @db.Decimal(12, 2)
+
+  porcentajeDescuento Decimal @default(0) @db.Decimal(5, 2)
+
+  porcentajeIva Decimal @default(21) @db.Decimal(5, 2)
+
+  creadoEn      DateTime @default(now())
+  actualizadoEn DateTime @updatedAt
+
+  @@map("compras_detalle")
 }
 
 enum TipoReserva {
