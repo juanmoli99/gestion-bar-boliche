@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "items" ADD COLUMN     "costoPromedio" DECIMAL(14,2) NOT NULL DEFAULT 0,
+ADD COLUMN     "ultimoCosto" DECIMAL(14,2) NOT NULL DEFAULT 0;

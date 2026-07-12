@@ -106,6 +106,9 @@ model Item {
   comprasDetalle        CompraDetalle[]
   detallesFormulaCompra DetalleFormulaCompra[]
   detallesCalculoCompra DetalleCalculoCompra[]
+  ultimoCosto           Decimal                @default(0) @db.Decimal(14, 2)
+  costoPromedio         Decimal                @default(0) @db.Decimal(14, 2)
+  historialCostos       HistorialCostoItem[]
 
   @@unique([nombre, tipo])
   @@index([categoriaId])
@@ -208,6 +211,8 @@ model Compra {
   ivaTotal Decimal @default(0) @db.Decimal(14, 2)
 
   total Decimal @default(0) @db.Decimal(14, 2)
+
+  historialCostos HistorialCostoItem[]
 
   @@map("compras")
 }
@@ -389,4 +394,28 @@ model DetalleCalculoCompra {
   @@unique([calculoId, itemId])
   @@index([itemId])
   @@map("detalles_calculos_compra")
+}
+
+model HistorialCostoItem {
+  id String @id @default(uuid())
+
+  itemId String
+  item   Item   @relation(fields: [itemId], references: [id])
+
+  compraId String?
+  compra   Compra? @relation(fields: [compraId], references: [id])
+
+  costoAnterior Decimal @db.Decimal(14, 2)
+
+  costoNuevo Decimal @db.Decimal(14, 2)
+
+  stockAnterior Decimal @db.Decimal(14, 3)
+
+  stockNuevo Decimal @db.Decimal(14, 3)
+
+  creadoEn DateTime @default(now())
+
+  @@index([itemId])
+  @@index([compraId])
+  @@map("historial_costos_items")
 }

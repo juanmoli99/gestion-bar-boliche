@@ -23,6 +23,22 @@ import { DeletePurchaseItemUseCase } from './application/delete-purchase-item/de
 import { RecalculatePurchaseTotalsRepository } from './application/recalculate-purchase-totals/recalculate-purchase-totals.repository';
 import { RecalculatePurchaseTotalsService } from './application/recalculate-purchase-totals/recalculate-purchase-totals.service';
 import { RecalculatePurchaseTotalsUseCase } from './application/recalculate-purchase-totals/recalculate-purchase-totals.use-case';
+import { ConfirmPurchaseController } from './application/confirm-purchase/confirm-purchase.controller';
+import { ConfirmPurchaseRepository } from './application/confirm-purchase/confirm-purchase.repository';
+import { ConfirmPurchaseService } from './application/confirm-purchase/confirm-purchase.service';
+import { ConfirmPurchaseUseCase } from './application/confirm-purchase/confirm-purchase.use-case';
+import { ListPurchasesController } from './application/list-purchases/list-purchases.controller';
+import { ListPurchasesRepository } from './application/list-purchases/list-purchases.repository';
+import { ListPurchasesService } from './application/list-purchases/list-purchases.service';
+import { ListPurchasesUseCase } from './application/list-purchases/list-purchases.use-case';
+import { FindPurchaseByIdController } from './application/find-purchase-by-id/find-purchase-by-id.controller';
+import { FindPurchaseByIdRepository } from './application/find-purchase-by-id/find-purchase-by-id.repository';
+import { FindPurchaseByIdService } from './application/find-purchase-by-id/find-purchase-by-id.service';
+import { FindPurchaseByIdUseCase } from './application/find-purchase-by-id/find-purchase-by-id.use-case';
+import { CancelPurchaseController } from './application/cancel-purchase/cancel-purchase.controller';
+import { CancelPurchaseRepository } from './application/cancel-purchase/cancel-purchase.repository';
+import { CancelPurchaseService } from './application/cancel-purchase/cancel-purchase.service';
+import { CancelPurchaseUseCase } from './application/cancel-purchase/cancel-purchase.use-case';
 
 @Module({
   imports: [
@@ -34,6 +50,10 @@ import { RecalculatePurchaseTotalsUseCase } from './application/recalculate-purc
     ListPurchaseItemsController,
     UpdatePurchaseItemController,
     DeletePurchaseItemController,
+    ConfirmPurchaseController,
+    ListPurchasesController,
+    FindPurchaseByIdController,
+    CancelPurchaseController,
   ],
   providers: [
     CreatePurchaseRepository,
@@ -54,6 +74,18 @@ import { RecalculatePurchaseTotalsUseCase } from './application/recalculate-purc
     RecalculatePurchaseTotalsRepository,
     RecalculatePurchaseTotalsService,
     RecalculatePurchaseTotalsUseCase,
+    ConfirmPurchaseRepository,
+    ConfirmPurchaseService,
+    ConfirmPurchaseUseCase,
+    ListPurchasesRepository,
+    ListPurchasesService,
+    ListPurchasesUseCase,
+    FindPurchaseByIdRepository,
+    FindPurchaseByIdService,
+    FindPurchaseByIdUseCase,
+    CancelPurchaseRepository,
+    CancelPurchaseService,
+    CancelPurchaseUseCase,
   ],
 })
 export class PurchasesModule {}
