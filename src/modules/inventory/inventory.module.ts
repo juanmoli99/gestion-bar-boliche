@@ -79,7 +79,20 @@ import { DeactivateUnitController } from './application/deactivate-unit/deactiva
 import { DeactivateUnitRepository } from './application/deactivate-unit/deactivate-unit.repository';
 import { DeactivateUnitService } from './application/deactivate-unit/deactivate-unit.service';
 import { DeactivateUnitUseCase } from './application/deactivate-unit/deactivate-unit.use-case';
+import { UpdateCategoryController } from './application/update-category/update-category.controller';
+import { UpdateCategoryRepository } from './application/update-category/update-category.repository';
+import { UpdateCategoryService } from './application/update-category/update-category.service';
+import { UpdateCategoryUseCase } from './application/update-category/update-category.use-case';
 
+import { DeactivateCategoryController } from './application/deactivate-category/deactivate-category.controller';
+import { DeactivateCategoryRepository } from './application/deactivate-category/deactivate-category.repository';
+import { DeactivateCategoryService } from './application/deactivate-category/deactivate-category.service';
+import { DeactivateCategoryUseCase } from './application/deactivate-category/deactivate-category.use-case';
+
+import { ReactivateCategoryController } from './application/reactivate-category/reactivate-category.controller';
+import { ReactivateCategoryRepository } from './application/reactivate-category/reactivate-category.repository';
+import { ReactivateCategoryService } from './application/reactivate-category/reactivate-category.service';
+import { ReactivateCategoryUseCase } from './application/reactivate-category/reactivate-category.use-case';
 import { ReactivateUnitController } from './application/reactivate-unit/reactivate-unit.controller';
 import { ReactivateUnitRepository } from './application/reactivate-unit/reactivate-unit.repository';
 import { ReactivateUnitService } from './application/reactivate-unit/reactivate-unit.service';
@@ -108,6 +121,9 @@ import { ReactivateUnitUseCase } from './application/reactivate-unit/reactivate-
   UpdateUnitController,
   DeactivateUnitController,
   ReactivateUnitController,
+  UpdateCategoryController,
+  DeactivateCategoryController,
+  ReactivateCategoryController,
 ],
   providers: [
   CreateItemRepository,
@@ -193,6 +209,18 @@ import { ReactivateUnitUseCase } from './application/reactivate-unit/reactivate-
   ReactivateUnitRepository,
   ReactivateUnitService,
   ReactivateUnitUseCase,
+
+  UpdateCategoryRepository,
+  UpdateCategoryService,
+  UpdateCategoryUseCase,
+
+  DeactivateCategoryRepository,
+  DeactivateCategoryService,
+  DeactivateCategoryUseCase,
+
+  ReactivateCategoryRepository,
+  ReactivateCategoryService,
+  ReactivateCategoryUseCase,
 ],
 })
 export class InventoryModule {}
