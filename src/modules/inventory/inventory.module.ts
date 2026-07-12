@@ -75,6 +75,15 @@ import { UpdateUnitController } from './application/update-unit/update-unit.cont
 import { UpdateUnitRepository } from './application/update-unit/update-unit.repository';
 import { UpdateUnitService } from './application/update-unit/update-unit.service';
 import { UpdateUnitUseCase } from './application/update-unit/update-unit.use-case';
+import { DeactivateUnitController } from './application/deactivate-unit/deactivate-unit.controller';
+import { DeactivateUnitRepository } from './application/deactivate-unit/deactivate-unit.repository';
+import { DeactivateUnitService } from './application/deactivate-unit/deactivate-unit.service';
+import { DeactivateUnitUseCase } from './application/deactivate-unit/deactivate-unit.use-case';
+
+import { ReactivateUnitController } from './application/reactivate-unit/reactivate-unit.controller';
+import { ReactivateUnitRepository } from './application/reactivate-unit/reactivate-unit.repository';
+import { ReactivateUnitService } from './application/reactivate-unit/reactivate-unit.service';
+import { ReactivateUnitUseCase } from './application/reactivate-unit/reactivate-unit.use-case';
 
 @Module({
   controllers: [
@@ -97,6 +106,8 @@ import { UpdateUnitUseCase } from './application/update-unit/update-unit.use-cas
   CreateUnitController,
   ListUnitsController,
   UpdateUnitController,
+  DeactivateUnitController,
+  ReactivateUnitController,
 ],
   providers: [
   CreateItemRepository,
@@ -174,6 +185,14 @@ import { UpdateUnitUseCase } from './application/update-unit/update-unit.use-cas
   UpdateUnitRepository,
   UpdateUnitService,
   UpdateUnitUseCase,
+
+  DeactivateUnitRepository,
+  DeactivateUnitService,
+  DeactivateUnitUseCase,
+
+  ReactivateUnitRepository,
+  ReactivateUnitService,
+  ReactivateUnitUseCase,
 ],
 })
 export class InventoryModule {}
