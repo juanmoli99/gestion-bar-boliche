@@ -10,6 +10,7 @@ import { UsersModule } from './modules/users/users.module';
 import { PurchasesModule } from './modules/purchases/purchases.module';
 import { JwtAuthGuard } from './shared/guards/jwt-auth.guard';
 import { RolesGuard } from './shared/guards/roles.guard';
+import { FormulasModule } from './modules/formulas/formulas.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { RolesGuard } from './shared/guards/roles.guard';
   InventoryModule,
   SuppliersModule,
   PurchasesModule,
+  FormulasModule
   ],
   providers: [
     {

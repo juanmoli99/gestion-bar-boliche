@@ -88,7 +88,10 @@ import { DeactivateCategoryController } from './application/deactivate-category/
 import { DeactivateCategoryRepository } from './application/deactivate-category/deactivate-category.repository';
 import { DeactivateCategoryService } from './application/deactivate-category/deactivate-category.service';
 import { DeactivateCategoryUseCase } from './application/deactivate-category/deactivate-category.use-case';
-
+import { InventoryCountController } from './application/inventory-count/inventory-count.controller';
+import { InventoryCountRepository } from './application/inventory-count/inventory-count.repository';
+import { InventoryCountService } from './application/inventory-count/inventory-count.service';
+import { InventoryCountUseCase } from './application/inventory-count/inventory-count.use-case';
 import { ReactivateCategoryController } from './application/reactivate-category/reactivate-category.controller';
 import { ReactivateCategoryRepository } from './application/reactivate-category/reactivate-category.repository';
 import { ReactivateCategoryService } from './application/reactivate-category/reactivate-category.service';
@@ -124,6 +127,7 @@ import { ReactivateUnitUseCase } from './application/reactivate-unit/reactivate-
   UpdateCategoryController,
   DeactivateCategoryController,
   ReactivateCategoryController,
+  InventoryCountController,
 ],
   providers: [
   CreateItemRepository,
@@ -221,6 +225,10 @@ import { ReactivateUnitUseCase } from './application/reactivate-unit/reactivate-
   ReactivateCategoryRepository,
   ReactivateCategoryService,
   ReactivateCategoryUseCase,
+
+  InventoryCountRepository,
+  InventoryCountService,
+  InventoryCountUseCase,
 ],
 })
 export class InventoryModule {}

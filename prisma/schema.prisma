@@ -52,8 +52,6 @@ enum TipoMovimientoStock {
   SALIDA
   AJUSTE_POSITIVO
   AJUSTE_NEGATIVO
-  TRANSFERENCIA_ENTRADA
-  TRANSFERENCIA_SALIDA
 }
 
 model Categoria {
@@ -104,7 +102,7 @@ model Item {
   stocks                Stock[]
   movimientos           MovimientoStock[]
   comprasDetalle        CompraDetalle[]
-  detallesFormulaCompra DetalleFormulaCompra[]
+  formulaVersionItems   FormulaVersionItem[]
   detallesCalculoCompra DetalleCalculoCompra[]
   ultimoCosto           Decimal                @default(0) @db.Decimal(14, 2)
   costoPromedio         Decimal                @default(0) @db.Decimal(14, 2)
@@ -256,40 +254,61 @@ enum EstadoReserva {
 }
 
 model Reserva {
-  id                   String        @id @default(uuid())
-  tipo                 TipoReserva
-  estado               EstadoReserva @default(PENDIENTE)
-  nombreCliente        String
-  telefonoCliente      String?
+  id     String        @id @default(uuid())
+  tipo   TipoReserva
+  estado EstadoReserva @default(PENDIENTE)
+
+  nombreCliente   String
+  telefonoCliente String?
+
   fechaHora            DateTime
   cantidadPersonas     Int
   cantidadMenusSinTacc Int?
-  tipoFiesta           String?
-  observaciones        String?
-  motivoCancelacion    String?
 
-  precioTotal    Decimal?  @db.Decimal(14, 2)
-  montoSena      Decimal?  @db.Decimal(14, 2)
-  saldoPendiente Decimal?  @db.Decimal(14, 2)
-  medioPagoSena  String?
-  fechaSena      DateTime?
-  fechaPagoFinal DateTime?
+  tipoFiesta String?
+
+  observaciones     String?
+  motivoCancelacion String?
+
+  precioTotal    Decimal? @db.Decimal(14, 2)
+  montoSena      Decimal? @db.Decimal(14, 2)
+  saldoPendiente Decimal? @db.Decimal(14, 2)
+
+  medioPagoSena String?
+  fechaSena     DateTime?
+
   medioPagoFinal String?
+  fechaPagoFinal DateTime?
+
+  formulaId        String?
+  formulaVersionId String?
 
   usuarioCreadorId      String?
   usuarioActualizadorId String?
-  activa                Boolean  @default(true)
-  creadoEn              DateTime @default(now())
-  actualizadoEn         DateTime @updatedAt
 
-  usuarioCreador      Usuario? @relation("ReservasCreadas", fields: [usuarioCreadorId], references: [id])
+  activa Boolean @default(true)
+
+  creadoEn      DateTime @default(now())
+  actualizadoEn DateTime @updatedAt
+
+  formula FormulaCompra? @relation(fields: [formulaId], references: [id])
+
+  formulaVersion FormulaVersion? @relation(fields: [formulaVersionId], references: [id])
+
+  usuarioCreador Usuario? @relation("ReservasCreadas", fields: [usuarioCreadorId], references: [id])
+
   usuarioActualizador Usuario? @relation("ReservasActualizadas", fields: [usuarioActualizadorId], references: [id])
 
-  historial      HistorialReserva[]
-  calculosCompra CalculoCompraFiesta[]
+  historial HistorialReserva[]
+
+  calculosCompra CalculoCompraReserva[]
+
+  detallesCalculo DetalleCalculoCompra[]
 
   @@index([tipo])
   @@index([estado])
+  @@index([formulaId])
+  @@index([formulaVersionId])
   @@index([fechaHora])
   @@index([nombreCliente])
   @@map("reservas")
@@ -321,78 +340,109 @@ enum EstadoCalculoCompra {
 }
 
 model FormulaCompra {
-  id            String   @id @default(uuid())
-  nombre        String
-  descripcion   String?
-  activa        Boolean  @default(true)
+  id          String  @id @default(uuid())
+  nombre      String  @unique
+  descripcion String?
+  activa      Boolean @default(true)
+
   creadoEn      DateTime @default(now())
   actualizadoEn DateTime @updatedAt
 
-  detalles DetalleFormulaCompra[]
-  calculos CalculoCompraFiesta[]
+  versiones FormulaVersion[]
+  reservas  Reserva[]
 
-  @@unique([nombre])
   @@map("formulas_compra")
 }
 
-model DetalleFormulaCompra {
-  id                 String   @id @default(uuid())
-  formulaId          String
-  itemId             String
-  cantidadReferencia Decimal  @db.Decimal(12, 3)
-  personasReferencia Int
-  unidadesPorPack    Int?
-  observaciones      String?
-  creadoEn           DateTime @default(now())
-  actualizadoEn      DateTime @updatedAt
+model FormulaVersion {
+  id String @id @default(uuid())
+
+  formulaId     String
+  numeroVersion Int
+
+  activa Boolean @default(true)
+
+  creadoEn DateTime @default(now())
 
   formula FormulaCompra @relation(fields: [formulaId], references: [id], onDelete: Cascade)
-  item    Item          @relation(fields: [itemId], references: [id])
 
-  @@unique([formulaId, itemId])
+  items FormulaVersionItem[]
+
+  reservas Reserva[]
+
+  @@unique([formulaId, numeroVersion])
+  @@index([formulaId])
+  @@map("formulas_versiones")
+}
+
+model FormulaVersionItem {
+  id String @id @default(uuid())
+
+  versionId String
+
+  itemId String
+
+  cantidadPorPersona Decimal @db.Decimal(12, 4)
+
+  activo Boolean @default(true)
+
+  creadoEn DateTime @default(now())
+
+  actualizadoEn DateTime @updatedAt
+
+  version FormulaVersion @relation(fields: [versionId], references: [id], onDelete: Cascade)
+
+  item Item @relation(fields: [itemId], references: [id])
+
+  @@unique([versionId, itemId])
+  @@index([versionId])
   @@index([itemId])
-  @@map("detalles_formulas_compra")
+  @@map("formulas_versiones_items")
 }
 
 model CalculoCompraFiesta {
-  id               String              @id @default(uuid())
-  reservaId        String
-  formulaId        String?
-  cantidadPersonas Int
-  estado           EstadoCalculoCompra @default(BORRADOR)
-  observaciones    String?
-  usuarioId        String?
-  creadoEn         DateTime            @default(now())
-  actualizadoEn    DateTime            @updatedAt
+  id                    String              @id @default(uuid())
+  fechaDesde            DateTime
+  fechaHasta            DateTime
+  estado                EstadoCalculoCompra @default(BORRADOR)
+  cantidadPersonasTotal Int                 @default(0)
+  observaciones         String?
+  usuarioId             String?
+  creadoEn              DateTime            @default(now())
+  actualizadoEn         DateTime            @updatedAt
 
-  reserva  Reserva                @relation(fields: [reservaId], references: [id], onDelete: Cascade)
-  formula  FormulaCompra?         @relation(fields: [formulaId], references: [id])
   usuario  Usuario?               @relation(fields: [usuarioId], references: [id])
+  reservas CalculoCompraReserva[]
   detalles DetalleCalculoCompra[]
 
-  @@index([reservaId])
-  @@index([formulaId])
   @@index([estado])
+  @@index([fechaDesde])
+  @@index([fechaHasta])
+  @@index([usuarioId])
   @@map("calculos_compra_fiesta")
 }
 
 model DetalleCalculoCompra {
   id                     String   @id @default(uuid())
   calculoId              String
+  reservaId              String
   itemId                 String
+  fecha                  DateTime
   cantidadCalculada      Decimal  @db.Decimal(12, 3)
   cantidadAjustada       Decimal? @db.Decimal(12, 3)
-  cantidadComprada       Decimal? @db.Decimal(12, 3)
-  cantidadPacksCalculada Decimal? @db.Decimal(12, 3)
-  unidadesPorPack        Int?
+  cantidadPacksCalculada Int?
   creadoEn               DateTime @default(now())
   actualizadoEn          DateTime @updatedAt
 
   calculo CalculoCompraFiesta @relation(fields: [calculoId], references: [id], onDelete: Cascade)
+  reserva Reserva             @relation(fields: [reservaId], references: [id])
   item    Item                @relation(fields: [itemId], references: [id])
 
-  @@unique([calculoId, itemId])
+  @@unique([calculoId, reservaId, itemId])
+  @@index([calculoId])
+  @@index([reservaId])
   @@index([itemId])
+  @@index([fecha])
   @@map("detalles_calculos_compra")
 }
 
@@ -418,4 +468,20 @@ model HistorialCostoItem {
   @@index([itemId])
   @@index([compraId])
   @@map("historial_costos_items")
+}
+
+model CalculoCompraReserva {
+  id               String   @id @default(uuid())
+  calculoId        String
+  reservaId        String
+  cantidadPersonas Int
+  creadoEn         DateTime @default(now())
+
+  calculo CalculoCompraFiesta @relation(fields: [calculoId], references: [id], onDelete: Cascade)
+  reserva Reserva             @relation(fields: [reservaId], references: [id], onDelete: Cascade)
+
+  @@unique([calculoId, reservaId])
+  @@index([calculoId])
+  @@index([reservaId])
+  @@map("calculos_compra_reservas")
 }

@@ -33,20 +33,20 @@ export class CreateStockMovementUseCase {
       );
     }
 
-    const cantidadAnterior = Number(stock.cantidadActual);
+    const cantidadAnterior = Number(
+      stock.cantidadActual,
+    );
 
     let cantidadPosterior = cantidadAnterior;
 
     switch (request.tipo) {
       case TipoMovimientoStock.ENTRADA:
       case TipoMovimientoStock.AJUSTE_POSITIVO:
-      case TipoMovimientoStock.TRANSFERENCIA_ENTRADA:
         cantidadPosterior += request.cantidad;
         break;
 
       case TipoMovimientoStock.SALIDA:
       case TipoMovimientoStock.AJUSTE_NEGATIVO:
-      case TipoMovimientoStock.TRANSFERENCIA_SALIDA:
         cantidadPosterior -= request.cantidad;
 
         if (cantidadPosterior < 0) {
