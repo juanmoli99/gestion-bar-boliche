@@ -11,6 +11,8 @@ import { PurchasesModule } from './modules/purchases/purchases.module';
 import { JwtAuthGuard } from './shared/guards/jwt-auth.guard';
 import { RolesGuard } from './shared/guards/roles.guard';
 import { FormulasModule } from './modules/formulas/formulas.module';
+import { ReservationsModule } from './modules/reservations/reservations.module';
+import { PurchaseCalculationModule } from './modules/purchase-calculation/purchase-calculation.module';
 
 @Module({
   imports: [
@@ -22,7 +24,9 @@ import { FormulasModule } from './modules/formulas/formulas.module';
   InventoryModule,
   SuppliersModule,
   PurchasesModule,
-  FormulasModule
+  FormulasModule,
+  ReservationsModule,
+  PurchaseCalculationModule
   ],
   providers: [
     {
