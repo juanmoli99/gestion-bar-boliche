@@ -7,14 +7,16 @@ import { CreateReservationResponseDto } from './dto/create-reservation.response.
 @Injectable()
 export class CreateReservationService {
   constructor(
-    private readonly createReservationUseCase: CreateReservationUseCase,
+    private readonly useCase: CreateReservationUseCase,
   ) {}
 
   async execute(
     request: CreateReservationRequestDto,
+    usuarioId: string,
   ): Promise<CreateReservationResponseDto> {
-    return this.createReservationUseCase.execute(
+    return this.useCase.execute(
       request,
+      usuarioId,
     );
   }
 }

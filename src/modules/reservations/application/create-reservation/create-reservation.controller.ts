@@ -8,6 +8,7 @@ import {
   RolUsuario,
 } from '../../../../generated/prisma/enums';
 
+import { CurrentUser } from '../../../../shared/decorators/current-user.decorator';
 import { Roles } from '../../../../shared/decorators/roles.decorator';
 
 import { CreateReservationService } from './create-reservation.service';
@@ -25,9 +26,15 @@ export class CreateReservationController {
   async create(
     @Body()
     request: CreateReservationRequestDto,
+
+    @CurrentUser()
+    user: {
+      id: string;
+    },
   ): Promise<CreateReservationResponseDto> {
     return this.createReservationService.execute(
       request,
+      user.id,
     );
   }
 }

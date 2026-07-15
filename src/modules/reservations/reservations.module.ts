@@ -4,7 +4,10 @@ import { ListReservationsRepository } from './application/list-reservations/list
 import { ListReservationsService } from './application/list-reservations/list-reservations.service';
 import { ListReservationsUseCase } from './application/list-reservations/list-reservations.use-case';
 import { PrismaModule } from '../../core/database/prisma.module';
-
+import { GetReservationController } from './application/get-reservation/get-reservation.controller';
+import { GetReservationRepository } from './application/get-reservation/get-reservation.repository';
+import { GetReservationService } from './application/get-reservation/get-reservation.service';
+import { GetReservationUseCase } from './application/get-reservation/get-reservation.use-case';
 import { CreateReservationController } from './application/create-reservation/create-reservation.controller';
 import { CreateReservationRepository } from './application/create-reservation/create-reservation.repository';
 import { CreateReservationService } from './application/create-reservation/create-reservation.service';
@@ -21,17 +24,25 @@ import { ConfirmReservationController } from './application/confirm-reservation/
 import { ConfirmReservationRepository } from './application/confirm-reservation/confirm-reservation.repository';
 import { ConfirmReservationService } from './application/confirm-reservation/confirm-reservation.service';
 import { ConfirmReservationUseCase } from './application/confirm-reservation/confirm-reservation.use-case';
+import { ReservationHistoryRepository } from './application/reservation-history/reservation-history.repository';
+import { ReservationHistoryService } from './application/reservation-history/reservation-history.service';
+import { UpdateReservationStatusController } from './application/update-reservation-status/update-reservation-status.controller';
+import { UpdateReservationStatusRepository } from './application/update-reservation-status/update-reservation-status.repository';
+import { UpdateReservationStatusService } from './application/update-reservation-status/update-reservation-status.service';
+import { UpdateReservationStatusUseCase } from './application/update-reservation-status/update-reservation-status.use-case';
 
 @Module({
   imports: [
     PrismaModule,
   ],
   controllers: [
+    GetReservationController,
     CreateReservationController,
     UpdateReservationController,
     CancelReservationController,
     ConfirmReservationController,
-    ListReservationsController
+    ListReservationsController,
+    UpdateReservationStatusController,
 
   ],
   providers: [
@@ -54,6 +65,17 @@ import { ConfirmReservationUseCase } from './application/confirm-reservation/con
     ConfirmReservationRepository,
     ConfirmReservationService,
     ConfirmReservationUseCase,
+
+    GetReservationRepository,
+    GetReservationService,
+    GetReservationUseCase,
+
+    ReservationHistoryRepository,
+    ReservationHistoryService,
+
+    UpdateReservationStatusRepository,
+    UpdateReservationStatusService,
+    UpdateReservationStatusUseCase,
   ],
 })
 export class ReservationsModule {}

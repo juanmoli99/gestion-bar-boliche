@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-
+import { SaveCalculationService } from '../save-calculation/save-calculation.service';
 import { PurchaseCalculationEngine } from '../../domain/purchase-calculation.engine';
 
 import { CalculatePurchasesRequestDto } from './dto/calculate-purchases.request.dto';
@@ -8,11 +8,13 @@ import { CalculatePurchasesResponseDto } from './dto/calculate-purchases.respons
 @Injectable()
 export class CalculatePurchasesUseCase {
   constructor(
-    private readonly engine: PurchaseCalculationEngine,
-  ) {}
+  private readonly engine: PurchaseCalculationEngine,
+  private readonly saveCalculationService: SaveCalculationService,
+) {}
 
   async execute(
-    request: CalculatePurchasesRequestDto,
+  request: CalculatePurchasesRequestDto,
+  usuarioId: string,
   ): Promise<CalculatePurchasesResponseDto> {
 
     const result =
@@ -24,6 +26,10 @@ export class CalculatePurchasesUseCase {
           `${request.fechaHasta}T23:59:59.999`,
         ),
       );
+      await this.saveCalculationService.execute({
+      calculation: result,
+      usuarioId,
+      });
 
     return {
       fechaDesde: request.fechaDesde,

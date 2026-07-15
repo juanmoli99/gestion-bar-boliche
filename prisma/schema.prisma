@@ -337,6 +337,7 @@ enum EstadoCalculoCompra {
   BORRADOR
   CONFIRMADO
   COMPRA_REALIZADA
+  ELIMINADO
 }
 
 model FormulaCompra {

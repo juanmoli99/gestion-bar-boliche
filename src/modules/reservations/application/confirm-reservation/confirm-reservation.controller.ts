@@ -9,9 +9,11 @@ import {
   RolUsuario,
 } from '../../../../generated/prisma/enums';
 
+import { CurrentUser } from '../../../../shared/decorators/current-user.decorator';
 import { Roles } from '../../../../shared/decorators/roles.decorator';
 
 import { ConfirmReservationService } from './confirm-reservation.service';
+import { ConfirmReservationResponseDto } from './dto/confirm-reservation.response.dto';
 
 @Controller('reservations')
 export class ConfirmReservationController {
@@ -24,7 +26,15 @@ export class ConfirmReservationController {
   confirm(
     @Param('id', ParseUUIDPipe)
     id: string,
-  ) {
-    return this.service.execute(id);
+
+    @CurrentUser()
+    user: {
+      id: string;
+    },
+  ): Promise<ConfirmReservationResponseDto> {
+    return this.service.execute(
+      id,
+      user.id,
+    );
   }
 }

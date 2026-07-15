@@ -2,17 +2,17 @@ import { Injectable } from '@nestjs/common';
 
 import { PrismaService } from '../../../../core/database/prisma.service';
 import {
-  EstadoReserva,
+  EstadoCalculoCompra,
 } from '../../../../generated/prisma/enums';
 
 @Injectable()
-export class ConfirmReservationRepository {
+export class RestoreCalculationRepository {
   constructor(
     private readonly prisma: PrismaService,
   ) {}
 
   findById(id: string) {
-    return this.prisma.reserva.findUnique({
+    return this.prisma.calculoCompraFiesta.findUnique({
       where: {
         id,
       },
@@ -23,17 +23,13 @@ export class ConfirmReservationRepository {
     });
   }
 
-  confirm(
-    id: string,
-    usuarioId: string,
-  ) {
-    return this.prisma.reserva.update({
+  restore(id: string) {
+    return this.prisma.calculoCompraFiesta.update({
       where: {
         id,
       },
       data: {
-        estado: EstadoReserva.CONFIRMADA,
-        usuarioActualizadorId: usuarioId,
+        estado: EstadoCalculoCompra.BORRADOR,
       },
       select: {
         id: true,

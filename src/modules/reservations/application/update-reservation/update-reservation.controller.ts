@@ -10,10 +10,12 @@ import {
   RolUsuario,
 } from '../../../../generated/prisma/enums';
 
+import { CurrentUser } from '../../../../shared/decorators/current-user.decorator';
 import { Roles } from '../../../../shared/decorators/roles.decorator';
 
 import { UpdateReservationService } from './update-reservation.service';
 import { UpdateReservationRequestDto } from './dto/update-reservation.request.dto';
+import { UpdateReservationResponseDto } from './dto/update-reservation.response.dto';
 
 @Controller('reservations')
 export class UpdateReservationController {
@@ -29,10 +31,16 @@ export class UpdateReservationController {
 
     @Body()
     request: UpdateReservationRequestDto,
-  ) {
+
+    @CurrentUser()
+    user: {
+      id: string;
+    },
+  ): Promise<UpdateReservationResponseDto> {
     return this.service.execute(
       id,
       request,
+      user.id,
     );
   }
 }

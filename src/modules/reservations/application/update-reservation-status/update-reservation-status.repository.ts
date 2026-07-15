@@ -1,12 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
 import { PrismaService } from '../../../../core/database/prisma.service';
-import {
-  EstadoReserva,
-} from '../../../../generated/prisma/enums';
+import { EstadoReserva } from '../../../../generated/prisma/enums';
 
 @Injectable()
-export class ConfirmReservationRepository {
+export class UpdateReservationStatusRepository {
   constructor(
     private readonly prisma: PrismaService,
   ) {}
@@ -23,8 +21,9 @@ export class ConfirmReservationRepository {
     });
   }
 
-  confirm(
+  update(
     id: string,
+    estado: EstadoReserva,
     usuarioId: string,
   ) {
     return this.prisma.reserva.update({
@@ -32,7 +31,7 @@ export class ConfirmReservationRepository {
         id,
       },
       data: {
-        estado: EstadoReserva.CONFIRMADA,
+        estado,
         usuarioActualizadorId: usuarioId,
       },
       select: {

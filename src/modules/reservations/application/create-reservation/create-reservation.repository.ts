@@ -1,6 +1,22 @@
 import { Injectable } from '@nestjs/common';
 
 import { PrismaService } from '../../../../core/database/prisma.service';
+import { TipoReserva } from '../../../../generated/prisma/enums';
+
+interface CreateReservationData {
+  tipo: TipoReserva;
+  nombreCliente: string;
+  telefonoCliente?: string;
+  fechaHora: Date;
+  cantidadPersonas: number;
+  cantidadMenusSinTacc?: number;
+  tipoFiesta?: string;
+  observaciones?: string;
+  formulaId?: string;
+  formulaVersionId?: string;
+  usuarioCreadorId: string;
+  usuarioActualizadorId: string;
+}
 
 @Injectable()
 export class CreateReservationRepository {
@@ -25,18 +41,9 @@ export class CreateReservationRepository {
     });
   }
 
-  async create(data: {
-    tipo: any;
-    nombreCliente: string;
-    telefonoCliente?: string;
-    fechaHora: Date;
-    cantidadPersonas: number;
-    cantidadMenusSinTacc?: number;
-    tipoFiesta?: string;
-    observaciones?: string;
-    formulaId?: string;
-    formulaVersionId?: string;
-  }) {
+  async create(
+    data: CreateReservationData,
+  ) {
     return this.prisma.reserva.create({
       data,
       select: {

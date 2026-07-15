@@ -11,7 +11,11 @@ export class CalculatePurchasesService {
 
   execute(
     request: CalculatePurchasesRequestDto,
+    usuarioId: string,
   ) {
-    return this.useCase.execute(request);
+    return this.useCase.execute(
+    request,
+    usuarioId,
+    );
   }
 }

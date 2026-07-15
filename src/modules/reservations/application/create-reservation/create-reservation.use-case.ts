@@ -7,6 +7,7 @@ import {
   TipoReserva,
 } from '../../../../generated/prisma/enums';
 
+import { ReservationHistoryService } from '../reservation-history/reservation-history.service';
 import { CreateReservationRepository } from './create-reservation.repository';
 import { CreateReservationRequestDto } from './dto/create-reservation.request.dto';
 import { CreateReservationResponseDto } from './dto/create-reservation.response.dto';
@@ -15,11 +16,14 @@ import { CreateReservationResponseDto } from './dto/create-reservation.response.
 export class CreateReservationUseCase {
   constructor(
     private readonly repository: CreateReservationRepository,
+    private readonly historyService: ReservationHistoryService,
   ) {}
 
   async execute(
     request: CreateReservationRequestDto,
+    usuarioId: string,
   ): Promise<CreateReservationResponseDto> {
+    let formulaId: string | undefined;
     let formulaVersionId: string | undefined;
 
     if (request.tipo === TipoReserva.FIESTA) {
@@ -40,30 +44,45 @@ export class CreateReservationUseCase {
         );
       }
 
+      formulaId = request.formulaId;
       formulaVersionId = version.id;
     }
 
-    return this.repository.create({
-      tipo: request.tipo,
-      nombreCliente: request.nombreCliente.trim(),
-      telefonoCliente: request.telefonoCliente?.trim(),
-      fechaHora: new Date(request.fechaHora),
-      cantidadPersonas: request.cantidadPersonas,
-      cantidadMenusSinTacc:
-        request.tipo === TipoReserva.MESA
-          ? request.cantidadMenusSinTacc
-          : undefined,
-      tipoFiesta:
-        request.tipo === TipoReserva.FIESTA
-          ? request.tipoFiesta?.trim()
-          : undefined,
-      observaciones:
-        request.observaciones?.trim(),
-      formulaId:
-        request.tipo === TipoReserva.FIESTA
-          ? request.formulaId
-          : undefined,
-      formulaVersionId,
+    const reservation =
+      await this.repository.create({
+        tipo: request.tipo,
+        nombreCliente:
+          request.nombreCliente.trim(),
+        telefonoCliente:
+          request.telefonoCliente?.trim(),
+        fechaHora: new Date(request.fechaHora),
+        cantidadPersonas:
+          request.cantidadPersonas,
+        cantidadMenusSinTacc:
+          request.tipo === TipoReserva.MESA
+            ? request.cantidadMenusSinTacc
+            : undefined,
+        tipoFiesta:
+          request.tipo === TipoReserva.FIESTA
+            ? request.tipoFiesta?.trim()
+            : undefined,
+        observaciones:
+          request.observaciones?.trim(),
+        formulaId,
+        formulaVersionId,
+        usuarioCreadorId: usuarioId,
+        usuarioActualizadorId: usuarioId,
+      });
+
+    await this.historyService.register({
+      reservaId: reservation.id,
+      usuarioId,
+      accion: 'RESERVA_CREADA',
+      campo: 'estado',
+      valorAnterior: null,
+      valorNuevo: reservation.estado,
     });
+
+    return reservation;
   }
 }
