@@ -3,31 +3,24 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../../core/database/prisma.service';
 
 @Injectable()
-export class ListStockRepository {
+export class GetCriticalInventoryRepository {
   constructor(
     private readonly prisma: PrismaService,
   ) {}
 
-  async findAll() {
+  findCriticalStocks() {
     return this.prisma.stock.findMany({
-      orderBy: [
-        {
-          inventario: 'asc',
+      where: {
+        cantidadMinima: {
+          not: null,
         },
-        {
-          item: {
-            nombre: 'asc',
-          },
-        },
-      ],
+      },
       select: {
         id: true,
         itemId: true,
         inventario: true,
         cantidadActual: true,
         cantidadMinima: true,
-        creadoEn: true,
-        actualizadoEn: true,
 
         item: {
           select: {

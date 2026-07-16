@@ -83,7 +83,8 @@ import { UpdateCategoryController } from './application/update-category/update-c
 import { UpdateCategoryRepository } from './application/update-category/update-category.repository';
 import { UpdateCategoryService } from './application/update-category/update-category.service';
 import { UpdateCategoryUseCase } from './application/update-category/update-category.use-case';
-
+import { GetCriticalInventoryRepository } from './application/get-critical-inventory/get-critical-inventory.repository';
+import { GetCriticalInventoryUseCase } from './application/get-critical-inventory/get-critical-inventory.use-case';
 import { DeactivateCategoryController } from './application/deactivate-category/deactivate-category.controller';
 import { DeactivateCategoryRepository } from './application/deactivate-category/deactivate-category.repository';
 import { DeactivateCategoryService } from './application/deactivate-category/deactivate-category.service';
@@ -102,6 +103,10 @@ import { ReactivateUnitService } from './application/reactivate-unit/reactivate-
 import { ReactivateUnitUseCase } from './application/reactivate-unit/reactivate-unit.use-case';
 
 @Module({
+
+  exports: [
+  GetCriticalInventoryUseCase,
+  ],
   controllers: [
   CreateItemController,
   CreateStockController,
@@ -128,8 +133,12 @@ import { ReactivateUnitUseCase } from './application/reactivate-unit/reactivate-
   DeactivateCategoryController,
   ReactivateCategoryController,
   InventoryCountController,
+  
 ],
   providers: [
+  GetCriticalInventoryRepository,
+  GetCriticalInventoryUseCase,
+
   CreateItemRepository,
   CreateItemService,
   CreateItemUseCase,

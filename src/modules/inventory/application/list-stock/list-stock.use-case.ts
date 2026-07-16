@@ -10,6 +10,38 @@ export class ListStockUseCase {
   ) {}
 
   async execute(): Promise<ListStockResponseDto[]> {
-    return this.repository.findAll();
+    const stocks =
+      await this.repository.findAll();
+
+    return stocks.map((stock) => ({
+      id: stock.id,
+
+      itemId: stock.itemId,
+
+      itemNombre: stock.item.nombre,
+
+      categoriaNombre:
+        stock.item.categoria.nombre,
+
+      unidadMedida:
+        stock.item.unidadMedida.nombre,
+
+      abreviaturaUnidad:
+        stock.item.unidadMedida.abreviatura,
+
+      inventario: stock.inventario,
+
+      cantidadActual:
+        stock.cantidadActual,
+
+      cantidadMinima:
+        stock.cantidadMinima,
+
+      creadoEn:
+        stock.creadoEn,
+
+      actualizadoEn:
+        stock.actualizadoEn,
+    }));
   }
 }

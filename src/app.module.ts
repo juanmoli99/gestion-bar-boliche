@@ -1,32 +1,37 @@
 import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
-import { InventoryModule } from './modules/inventory/inventory.module';
+
 import { ConfigModule } from './core/config/config.module';
 import { PrismaModule } from './core/database/prisma.module';
 import { HealthModule } from './core/health/health.module';
-import { SuppliersModule } from './modules/suppliers/suppliers.module';
+
 import { AuthModule } from './modules/auth/auth.module';
-import { UsersModule } from './modules/users/users.module';
+import { DashboardModule } from './modules/dashboard/dashboard.module';
+import { FormulasModule } from './modules/formulas/formulas.module';
+import { InventoryModule } from './modules/inventory/inventory.module';
+import { PurchaseCalculationModule } from './modules/purchase-calculation/purchase-calculation.module';
 import { PurchasesModule } from './modules/purchases/purchases.module';
+import { ReservationsModule } from './modules/reservations/reservations.module';
+import { SuppliersModule } from './modules/suppliers/suppliers.module';
+import { UsersModule } from './modules/users/users.module';
+
 import { JwtAuthGuard } from './shared/guards/jwt-auth.guard';
 import { RolesGuard } from './shared/guards/roles.guard';
-import { FormulasModule } from './modules/formulas/formulas.module';
-import { ReservationsModule } from './modules/reservations/reservations.module';
-import { PurchaseCalculationModule } from './modules/purchase-calculation/purchase-calculation.module';
 
 @Module({
   imports: [
-  ConfigModule,
-  PrismaModule,
-  HealthModule,
-  UsersModule,
-  AuthModule,
-  InventoryModule,
-  SuppliersModule,
-  PurchasesModule,
-  FormulasModule,
-  ReservationsModule,
-  PurchaseCalculationModule
+    ConfigModule,
+    PrismaModule,
+    HealthModule,
+    UsersModule,
+    AuthModule,
+    InventoryModule,
+    SuppliersModule,
+    PurchasesModule,
+    FormulasModule,
+    ReservationsModule,
+    PurchaseCalculationModule,
+    DashboardModule,
   ],
   providers: [
     {

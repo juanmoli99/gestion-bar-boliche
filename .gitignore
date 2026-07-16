@@ -2,7 +2,8 @@
 /dist
 /node_modules
 /build
-
+apps/backend/
+apps/frontend/
 # Logs
 logs
 *.log
