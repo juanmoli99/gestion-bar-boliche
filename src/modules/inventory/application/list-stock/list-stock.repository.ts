@@ -1,15 +1,26 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+} from '@nestjs/common';
 
-import { PrismaService } from '../../../../core/database/prisma.service';
+import {
+  PrismaService,
+} from '../../../../core/database/prisma.service';
 
 @Injectable()
 export class ListStockRepository {
   constructor(
-    private readonly prisma: PrismaService,
+    private readonly prisma:
+      PrismaService,
   ) {}
 
   async findAll() {
     return this.prisma.stock.findMany({
+      where: {
+        item: {
+          activo: true,
+        },
+      },
+
       orderBy: [
         {
           inventario: 'asc',
@@ -20,6 +31,7 @@ export class ListStockRepository {
           },
         },
       ],
+
       select: {
         id: true,
         itemId: true,

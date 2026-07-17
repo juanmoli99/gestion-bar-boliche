@@ -1,6 +1,7 @@
 import {
   IsEnum,
   IsInt,
+  IsNumber,
   IsOptional,
   IsString,
   IsUUID,
@@ -39,4 +40,18 @@ export class CreateItemRequestDto {
   @IsInt()
   @Min(1)
   unidadesPorPack?: number;
+
+  @IsOptional()
+  @IsNumber({
+    maxDecimalPlaces: 3,
+  })
+  @Min(0)
+  cantidadActual?: number;
+
+  @IsOptional()
+  @IsNumber({
+    maxDecimalPlaces: 3,
+  })
+  @Min(0)
+  cantidadMinima?: number;
 }

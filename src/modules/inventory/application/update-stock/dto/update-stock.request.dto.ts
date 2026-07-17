@@ -6,12 +6,9 @@ import {
 
 export class UpdateStockRequestDto {
   @IsOptional()
-  @IsNumber()
-  @Min(0)
-  cantidadActual?: number;
-
-  @IsOptional()
-  @IsNumber()
+  @IsNumber({
+    maxDecimalPlaces: 3,
+  })
   @Min(0)
   cantidadMinima?: number;
 }

@@ -1,33 +1,43 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../../../core/database/prisma.service';
 
-interface UpdateStockData {
-  cantidadActual?: number;
-  cantidadMinima?: number;
-}
+import {
+  PrismaService,
+} from '../../../../core/database/prisma.service';
 
 @Injectable()
 export class UpdateStockRepository {
   constructor(
-    private readonly prisma: PrismaService,
+    private readonly prisma:
+      PrismaService,
   ) {}
 
-  async findById(id: string) {
+  async findById(
+    id: string,
+  ) {
     return this.prisma.stock.findUnique({
-      where: { id },
+      where: {
+        id,
+      },
+
       select: {
         id: true,
       },
     });
   }
 
-  async update(
+  async updateMinimum(
     id: string,
-    data: UpdateStockData,
+    cantidadMinima: number,
   ) {
     return this.prisma.stock.update({
-      where: { id },
-      data,
+      where: {
+        id,
+      },
+
+      data: {
+        cantidadMinima,
+      },
+
       select: {
         id: true,
         itemId: true,

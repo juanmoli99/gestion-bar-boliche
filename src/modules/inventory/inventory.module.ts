@@ -101,6 +101,10 @@ import { ReactivateUnitController } from './application/reactivate-unit/reactiva
 import { ReactivateUnitRepository } from './application/reactivate-unit/reactivate-unit.repository';
 import { ReactivateUnitService } from './application/reactivate-unit/reactivate-unit.service';
 import { ReactivateUnitUseCase } from './application/reactivate-unit/reactivate-unit.use-case';
+import { BulkInventoryCountController } from './application/bulk-inventory-count/bulk-inventory-count.controller';
+import { BulkInventoryCountRepository } from './application/bulk-inventory-count/bulk-inventory-count.repository';
+import { BulkInventoryCountService } from './application/bulk-inventory-count/bulk-inventory-count.service';
+import { BulkInventoryCountUseCase } from './application/bulk-inventory-count/bulk-inventory-count.use-case';
 
 @Module({
 
@@ -112,6 +116,7 @@ import { ReactivateUnitUseCase } from './application/reactivate-unit/reactivate-
   CreateStockController,
   CreateStockMovementController,
   ListStockMovementsController,
+  BulkInventoryCountController,
   UpdateStockController,
   FindStockByIdController,
   ReactivateItemController,
@@ -136,6 +141,9 @@ import { ReactivateUnitUseCase } from './application/reactivate-unit/reactivate-
   
 ],
   providers: [
+  BulkInventoryCountRepository,
+  BulkInventoryCountService,
+  BulkInventoryCountUseCase,
   GetCriticalInventoryRepository,
   GetCriticalInventoryUseCase,
 

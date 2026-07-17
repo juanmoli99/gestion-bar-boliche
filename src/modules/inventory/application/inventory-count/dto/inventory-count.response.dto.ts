@@ -1,4 +1,6 @@
-import { Decimal } from '../../../../../generated/prisma/internal/prismaNamespace';
+import {
+  Decimal,
+} from '../../../../../generated/prisma/internal/prismaNamespace';
 
 export class InventoryCountResponseDto {
   stockId!: string;

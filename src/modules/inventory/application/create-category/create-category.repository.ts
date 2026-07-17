@@ -1,7 +1,14 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../../../core/database/prisma.service';
+import {
+  Injectable,
+} from '@nestjs/common';
 
-import { TipoInventario } from '../../../../generated/prisma/enums';
+import {
+  PrismaService,
+} from '../../../../core/database/prisma.service';
+
+import {
+  TipoInventario,
+} from '../../../../generated/prisma/enums';
 
 interface CreateCategoryData {
   nombre: string;
@@ -12,29 +19,78 @@ interface CreateCategoryData {
 @Injectable()
 export class CreateCategoryRepository {
   constructor(
-    private readonly prisma: PrismaService,
+    private readonly prisma:
+      PrismaService,
   ) {}
 
-  async exists(
+  async findByNameAndInventory(
     nombre: string,
     inventario: TipoInventario,
-  ): Promise<boolean> {
-    const categoria = await this.prisma.categoria.findFirst({
+  ) {
+    return this.prisma.categoria.findFirst({
       where: {
         nombre,
         inventario,
       },
+
       select: {
         id: true,
+        activa: true,
       },
     });
-
-    return categoria !== null;
   }
 
-  async create(data: CreateCategoryData) {
+  async create(
+    data: CreateCategoryData,
+  ) {
     return this.prisma.categoria.create({
-      data,
+      data: {
+        nombre:
+          data.nombre,
+
+        descripcion:
+          data.descripcion,
+
+        inventario:
+          data.inventario,
+      },
+
+      select: {
+        id: true,
+        nombre: true,
+        descripcion: true,
+        inventario: true,
+        activa: true,
+        creadoEn: true,
+        actualizadoEn: true,
+      },
+    });
+  }
+
+  async reactivate(
+    id: string,
+    data: CreateCategoryData,
+  ) {
+    return this.prisma.categoria.update({
+      where: {
+        id,
+      },
+
+      data: {
+        nombre:
+          data.nombre,
+
+        descripcion:
+          data.descripcion ??
+          null,
+
+        inventario:
+          data.inventario,
+
+        activa:
+          true,
+      },
+
       select: {
         id: true,
         nombre: true,
