@@ -1,5 +1,6 @@
 import {
   EstadoReserva,
+  ModalidadFiesta,
   TipoReserva,
 } from '../../../../../generated/prisma/enums';
 
@@ -19,4 +20,8 @@ export class ListReservationsResponseDto {
   cantidadPersonas!: number;
 
   nombreFormula!: string | null;
+
+  modalidadFiesta!: ModalidadFiesta | null;
+
+  observaciones!: string | null;
 }

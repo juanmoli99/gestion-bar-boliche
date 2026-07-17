@@ -1,7 +1,10 @@
-import { Decimal } from '../../../../../generated/prisma/internal/prismaNamespace';
+import {
+  Decimal,
+} from '../../../../../generated/prisma/internal/prismaNamespace';
 
 import {
   EstadoReserva,
+  ModalidadFiesta,
   TipoReserva,
 } from '../../../../../generated/prisma/enums';
 
@@ -34,6 +37,8 @@ export class GetReservationResponseDto {
 
   tipoFiesta!: string | null;
 
+  modalidadFiesta!: ModalidadFiesta | null;
+
   observaciones!: string | null;
 
   motivoCancelacion!: string | null;
@@ -43,6 +48,12 @@ export class GetReservationResponseDto {
   montoSena!: Decimal | null;
 
   saldoPendiente!: Decimal | null;
+
+  valorPizzaLibreAplicado!: Decimal | null;
+
+  valorMenuSinTaccAplicado!: Decimal | null;
+
+  valorBarraLibreAplicado!: Decimal | null;
 
   medioPagoSena!: string | null;
 

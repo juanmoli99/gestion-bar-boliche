@@ -13,6 +13,7 @@ import {
 } from '../../../../generated/prisma/internal/prismaNamespace';
 
 import {
+  ModalidadFiesta,
   TipoReserva,
 } from '../../../../generated/prisma/enums';
 
@@ -122,12 +123,20 @@ export class UpdateReservationUseCase {
       }
 
       if (
+        request.modalidadFiesta !== undefined
+      ) {
+        data.modalidadFiesta =
+          request.modalidadFiesta;
+      }
+
+      if (
         request.formulaId !== undefined
       ) {
         const version =
-          await this.repository.findActiveFormulaVersion(
-            request.formulaId,
-          );
+          await this.repository
+            .findActiveFormulaVersion(
+              request.formulaId,
+            );
 
         if (!version) {
           throw new BadRequestException(
@@ -149,58 +158,185 @@ export class UpdateReservationUseCase {
       }
     }
 
-    const precioTotal =
-      request.precioTotal !== undefined
-        ? new Decimal(request.precioTotal)
-        : reserva.precioTotal;
+    const cantidadPersonas =
+      request.cantidadPersonas ??
+      reserva.cantidadPersonas;
+
+    const cantidadMenusSinTacc =
+      reserva.tipo === TipoReserva.MESA
+        ? request.cantidadMenusSinTacc ??
+          reserva.cantidadMenusSinTacc ??
+          0
+        : 0;
+
+    if (
+      cantidadMenusSinTacc >
+      cantidadPersonas
+    ) {
+      throw new BadRequestException(
+        'La cantidad de menús sin TACC no puede ser mayor a la cantidad total de personas.',
+      );
+    }
 
     const montoSena =
       request.montoSena !== undefined
-        ? new Decimal(request.montoSena)
+        ? new Decimal(
+            request.montoSena,
+          )
         : reserva.montoSena;
 
     if (
-      montoSena !== null &&
-      precioTotal === null
-    ) {
-      throw new BadRequestException(
-        'Debe indicar el precio total para registrar una seña.',
-      );
-    }
-
-    if (
-      precioTotal !== null &&
-      montoSena !== null &&
-      montoSena.greaterThan(precioTotal)
-    ) {
-      throw new BadRequestException(
-        'La seña no puede ser mayor al precio total.',
-      );
-    }
-
-    if (
-      request.precioTotal !== undefined
-    ) {
-      data.precioTotal = precioTotal;
-    }
-
-    if (
       request.montoSena !== undefined
     ) {
-      data.montoSena = montoSena;
+      data.montoSena =
+        montoSena;
     }
 
+    let precioTotal: Decimal;
+
     if (
-      request.precioTotal !== undefined ||
-      request.montoSena !== undefined
+      reserva.tipo === TipoReserva.MESA
     ) {
+      if (
+        reserva.valorPizzaLibreAplicado ===
+          null ||
+        reserva.valorMenuSinTaccAplicado ===
+          null
+      ) {
+        throw new BadRequestException(
+          'La reserva no posee los valores aplicados necesarios para recalcular el precio.',
+        );
+      }
+
+      const cantidadPersonasComunes =
+        cantidadPersonas -
+        cantidadMenusSinTacc;
+
+      precioTotal =
+        reserva.valorPizzaLibreAplicado
+          .mul(
+            cantidadPersonasComunes,
+          )
+          .plus(
+            reserva.valorMenuSinTaccAplicado.mul(
+              cantidadMenusSinTacc,
+            ),
+          );
+
+      if (
+        montoSena !== null &&
+        montoSena.greaterThan(
+          precioTotal,
+        )
+      ) {
+        throw new BadRequestException(
+          'La seña no puede ser mayor al precio total.',
+        );
+      }
+
+      data.precioTotal =
+        precioTotal;
+
       data.saldoPendiente =
-        precioTotal === null
-          ? null
-          : precioTotal.minus(
-              montoSena ??
-                new Decimal(0),
+        precioTotal.minus(
+          montoSena ??
+            new Decimal(0),
+        );
+    } else {
+      const modalidadFinal =
+        request.modalidadFiesta ??
+        reserva.modalidadFiesta;
+
+      if (!modalidadFinal) {
+        throw new BadRequestException(
+          'Debe seleccionar la modalidad de la fiesta.',
+        );
+      }
+
+      const cambiaABarraLibre =
+        modalidadFinal ===
+          ModalidadFiesta.BARRA_LIBRE &&
+        reserva.modalidadFiesta !==
+          ModalidadFiesta.BARRA_LIBRE;
+
+      if (
+        modalidadFinal ===
+        ModalidadFiesta.COCTELERIA
+      ) {
+        precioTotal =
+          new Decimal(0);
+
+        data.precioTotal =
+          precioTotal;
+
+        data.saldoPendiente =
+          new Decimal(0);
+
+        if (
+          reserva.modalidadFiesta !==
+          ModalidadFiesta.COCTELERIA
+        ) {
+          data.valorBarraLibreAplicado =
+            null;
+        }
+      } else {
+        let valorBarraLibre:
+          | Decimal
+          | null;
+
+        if (cambiaABarraLibre) {
+          const values =
+            await this.repository.findValues();
+
+          if (!values) {
+            throw new BadRequestException(
+              'Debe configurar el valor de barra libre antes de modificar la reserva.',
             );
+          }
+
+          valorBarraLibre =
+            values.fiestaBarraLibrePorPersona;
+
+          data.valorBarraLibreAplicado =
+            valorBarraLibre;
+        } else {
+          valorBarraLibre =
+            reserva.valorBarraLibreAplicado;
+        }
+
+        if (
+          valorBarraLibre === null
+        ) {
+          throw new BadRequestException(
+            'La reserva no posee el valor de barra libre necesario para recalcular el precio.',
+          );
+        }
+
+        precioTotal =
+          valorBarraLibre.mul(
+            cantidadPersonas,
+          );
+
+        if (
+          montoSena !== null &&
+          montoSena.greaterThan(
+            precioTotal,
+          )
+        ) {
+          throw new BadRequestException(
+            'La seña no puede ser mayor al precio total.',
+          );
+        }
+
+        data.precioTotal =
+          precioTotal;
+
+        data.saldoPendiente =
+          precioTotal.minus(
+            montoSena ??
+              new Decimal(0),
+          );
+      }
     }
 
     const updatedReservation =
@@ -209,16 +345,19 @@ export class UpdateReservationUseCase {
         data,
       );
 
-    const ignoredFields = new Set([
-      'usuarioActualizador',
-      'formula',
-      'formulaVersion',
-    ]);
+    const ignoredFields =
+      new Set([
+        'usuarioActualizador',
+        'formula',
+        'formulaVersion',
+      ]);
 
     const camposModificados =
       Object.keys(data).filter(
         (campo) =>
-          !ignoredFields.has(campo),
+          !ignoredFields.has(
+            campo,
+          ),
       );
 
     const valoresAnteriores: Record<
@@ -269,12 +408,20 @@ export class UpdateReservationUseCase {
 
     for (const cambio of cambios) {
       await this.historyService.register({
-        reservaId: id,
+        reservaId:
+          id,
+
         usuarioId,
-        accion: 'RESERVA_ACTUALIZADA',
-        campo: cambio.campo,
+
+        accion:
+          'RESERVA_ACTUALIZADA',
+
+        campo:
+          cambio.campo,
+
         valorAnterior:
           cambio.valorAnterior,
+
         valorNuevo:
           cambio.valorNuevo,
       });

@@ -7,6 +7,7 @@ import {
 } from '../../../../generated/prisma/internal/prismaNamespace';
 
 import {
+  ModalidadFiesta,
   TipoReserva,
 } from '../../../../generated/prisma/enums';
 
@@ -17,14 +18,21 @@ interface CreateReservationData {
   fechaHora: Date;
   cantidadPersonas: number;
   cantidadMenusSinTacc?: number;
+
   tipoFiesta?: string;
+  modalidadFiesta?: ModalidadFiesta;
+
   observaciones?: string;
   formulaId?: string;
   formulaVersionId?: string;
 
-  precioTotal?: Decimal;
+  precioTotal: Decimal;
   montoSena?: Decimal;
-  saldoPendiente?: Decimal;
+  saldoPendiente: Decimal;
+
+  valorPizzaLibreAplicado?: Decimal;
+  valorMenuSinTaccAplicado?: Decimal;
+  valorBarraLibreAplicado?: Decimal;
 
   usuarioCreadorId: string;
   usuarioActualizadorId: string;
@@ -53,6 +61,21 @@ export class CreateReservationRepository {
     });
   }
 
+  async findValues() {
+    return this.prisma.valores.findUnique({
+      where: {
+        id: 1,
+      },
+      select: {
+        pizzaLibreGeneral: true,
+        pizzaLibreViernes: true,
+        pizzaLibreSabado: true,
+        menuSinTacc: true,
+        fiestaBarraLibrePorPersona: true,
+      },
+    });
+  }
+
   async create(
     data: CreateReservationData,
   ) {
@@ -67,13 +90,23 @@ export class CreateReservationRepository {
         fechaHora: true,
         cantidadPersonas: true,
         cantidadMenusSinTacc: true,
+
         tipoFiesta: true,
+        modalidadFiesta: true,
+
         formulaId: true,
         formulaVersionId: true,
+
         observaciones: true,
+
         precioTotal: true,
         montoSena: true,
         saldoPendiente: true,
+
+        valorPizzaLibreAplicado: true,
+        valorMenuSinTaccAplicado: true,
+        valorBarraLibreAplicado: true,
+
         creadoEn: true,
       },
     });

@@ -1,5 +1,6 @@
 import {
   IsDateString,
+  IsEnum,
   IsInt,
   IsNumber,
   IsOptional,
@@ -8,6 +9,10 @@ import {
   MaxLength,
   Min,
 } from 'class-validator';
+
+import {
+  ModalidadFiesta,
+} from '../../../../../generated/prisma/enums';
 
 export class UpdateReservationRequestDto {
   @IsOptional()
@@ -40,6 +45,10 @@ export class UpdateReservationRequestDto {
   tipoFiesta?: string;
 
   @IsOptional()
+  @IsEnum(ModalidadFiesta)
+  modalidadFiesta?: ModalidadFiesta;
+
+  @IsOptional()
   @IsUUID()
   formulaId?: string;
 
@@ -47,13 +56,6 @@ export class UpdateReservationRequestDto {
   @IsString()
   @MaxLength(500)
   observaciones?: string;
-
-  @IsOptional()
-  @IsNumber({
-    maxDecimalPlaces: 2,
-  })
-  @Min(0)
-  precioTotal?: number;
 
   @IsOptional()
   @IsNumber({

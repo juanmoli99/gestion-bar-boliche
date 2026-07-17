@@ -253,6 +253,11 @@ enum EstadoReserva {
   NO_ASISTIO
 }
 
+enum ModalidadFiesta {
+  BARRA_LIBRE
+  COCTELERIA
+}
+
 model Reserva {
   id     String        @id @default(uuid())
   tipo   TipoReserva
@@ -266,6 +271,7 @@ model Reserva {
   cantidadMenusSinTacc Int?
 
   tipoFiesta String?
+  modalidadFiesta ModalidadFiesta?
 
   observaciones     String?
   motivoCancelacion String?
@@ -273,6 +279,9 @@ model Reserva {
   precioTotal    Decimal? @db.Decimal(14, 2)
   montoSena      Decimal? @db.Decimal(14, 2)
   saldoPendiente Decimal? @db.Decimal(14, 2)
+  valorPizzaLibreAplicado Decimal? @db.Decimal(14, 2)
+  valorMenuSinTaccAplicado Decimal? @db.Decimal(14, 2)
+  valorBarraLibreAplicado Decimal? @db.Decimal(14, 2)
 
   medioPagoSena String?
   fechaSena     DateTime?
@@ -485,4 +494,21 @@ model CalculoCompraReserva {
   @@index([calculoId])
   @@index([reservaId])
   @@map("calculos_compra_reservas")
+}
+
+model Valores {
+  id Int @id @default(1)
+
+  pizzaLibreGeneral Decimal @default(0) @db.Decimal(14, 2)
+  pizzaLibreViernes Decimal @default(0) @db.Decimal(14, 2)
+  pizzaLibreSabado  Decimal @default(0) @db.Decimal(14, 2)
+
+  menuSinTacc Decimal @default(0) @db.Decimal(14, 2)
+
+  fiestaBarraLibrePorPersona Decimal @default(0) @db.Decimal(14, 2)
+
+  creadoEn      DateTime @default(now())
+  actualizadoEn DateTime @updatedAt
+
+  @@map("valores")
 }

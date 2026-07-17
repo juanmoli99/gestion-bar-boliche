@@ -3,13 +3,19 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { GetReservationRepository } from './get-reservation.repository';
-import { GetReservationResponseDto } from './dto/get-reservation.response.dto';
+import {
+  GetReservationRepository,
+} from './get-reservation.repository';
+
+import {
+  GetReservationResponseDto,
+} from './dto/get-reservation.response.dto';
 
 @Injectable()
 export class GetReservationUseCase {
   constructor(
-    private readonly repository: GetReservationRepository,
+    private readonly repository:
+      GetReservationRepository,
   ) {}
 
   async execute(
@@ -25,48 +31,97 @@ export class GetReservationUseCase {
     }
 
     return {
-      id: reservation.id,
-      tipo: reservation.tipo,
-      estado: reservation.estado,
-      nombreCliente: reservation.nombreCliente,
+      id:
+        reservation.id,
+
+      tipo:
+        reservation.tipo,
+
+      estado:
+        reservation.estado,
+
+      nombreCliente:
+        reservation.nombreCliente,
+
       telefonoCliente:
         reservation.telefonoCliente,
-      fechaHora: reservation.fechaHora,
+
+      fechaHora:
+        reservation.fechaHora,
+
       cantidadPersonas:
         reservation.cantidadPersonas,
+
       cantidadMenusSinTacc:
         reservation.cantidadMenusSinTacc,
-      tipoFiesta: reservation.tipoFiesta,
-      observaciones: reservation.observaciones,
+
+      tipoFiesta:
+        reservation.tipoFiesta,
+
+      modalidadFiesta:
+        reservation.modalidadFiesta,
+
+      observaciones:
+        reservation.observaciones,
+
       motivoCancelacion:
         reservation.motivoCancelacion,
-      precioTotal: reservation.precioTotal,
-      montoSena: reservation.montoSena,
+
+      precioTotal:
+        reservation.precioTotal,
+
+      montoSena:
+        reservation.montoSena,
+
       saldoPendiente:
         reservation.saldoPendiente,
+
+      valorPizzaLibreAplicado:
+        reservation.valorPizzaLibreAplicado,
+
+      valorMenuSinTaccAplicado:
+        reservation.valorMenuSinTaccAplicado,
+
+      valorBarraLibreAplicado:
+        reservation.valorBarraLibreAplicado,
+
       medioPagoSena:
         reservation.medioPagoSena,
-      fechaSena: reservation.fechaSena,
+
+      fechaSena:
+        reservation.fechaSena,
+
       medioPagoFinal:
         reservation.medioPagoFinal,
+
       fechaPagoFinal:
         reservation.fechaPagoFinal,
+
       formula:
         reservation.formula &&
         reservation.formulaVersion
           ? {
-              id: reservation.formula.id,
+              id:
+                reservation.formula.id,
+
               nombre:
                 reservation.formula.nombre,
+
               versionId:
                 reservation.formulaVersion.id,
+
               numeroVersion:
                 reservation.formulaVersion
                   .numeroVersion,
             }
           : null,
-      activa: reservation.activa,
-      creadoEn: reservation.creadoEn,
+
+      activa:
+        reservation.activa,
+
+      creadoEn:
+        reservation.creadoEn,
+
       actualizadoEn:
         reservation.actualizadoEn,
     };

@@ -11,6 +11,7 @@ import {
 } from 'class-validator';
 
 import {
+  ModalidadFiesta,
   TipoReserva,
 } from '../../../../../generated/prisma/enums';
 
@@ -45,6 +46,10 @@ export class CreateReservationRequestDto {
   tipoFiesta?: string;
 
   @IsOptional()
+  @IsEnum(ModalidadFiesta)
+  modalidadFiesta?: ModalidadFiesta;
+
+  @IsOptional()
   @IsUUID()
   formulaId?: string;
 
@@ -52,13 +57,6 @@ export class CreateReservationRequestDto {
   @IsString()
   @MaxLength(500)
   observaciones?: string;
-
-  @IsOptional()
-  @IsNumber({
-    maxDecimalPlaces: 2,
-  })
-  @Min(0)
-  precioTotal?: number;
 
   @IsOptional()
   @IsNumber({
