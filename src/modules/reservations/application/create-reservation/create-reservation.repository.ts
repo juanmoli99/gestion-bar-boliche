@@ -1,7 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
 import { PrismaService } from '../../../../core/database/prisma.service';
-import { TipoReserva } from '../../../../generated/prisma/enums';
+
+import {
+  Decimal,
+} from '../../../../generated/prisma/internal/prismaNamespace';
+
+import {
+  TipoReserva,
+} from '../../../../generated/prisma/enums';
 
 interface CreateReservationData {
   tipo: TipoReserva;
@@ -14,6 +21,11 @@ interface CreateReservationData {
   observaciones?: string;
   formulaId?: string;
   formulaVersionId?: string;
+
+  precioTotal?: Decimal;
+  montoSena?: Decimal;
+  saldoPendiente?: Decimal;
+
   usuarioCreadorId: string;
   usuarioActualizadorId: string;
 }
@@ -59,6 +71,9 @@ export class CreateReservationRepository {
         formulaId: true,
         formulaVersionId: true,
         observaciones: true,
+        precioTotal: true,
+        montoSena: true,
+        saldoPendiente: true,
         creadoEn: true,
       },
     });

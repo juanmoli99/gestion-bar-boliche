@@ -1,6 +1,7 @@
 import {
   IsDateString,
   IsInt,
+  IsNumber,
   IsOptional,
   IsString,
   IsUUID,
@@ -46,4 +47,18 @@ export class UpdateReservationRequestDto {
   @IsString()
   @MaxLength(500)
   observaciones?: string;
+
+  @IsOptional()
+  @IsNumber({
+    maxDecimalPlaces: 2,
+  })
+  @Min(0)
+  precioTotal?: number;
+
+  @IsOptional()
+  @IsNumber({
+    maxDecimalPlaces: 2,
+  })
+  @Min(0)
+  montoSena?: number;
 }

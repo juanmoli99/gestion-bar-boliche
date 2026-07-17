@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { DashboardEventsService } from '../../../dashboard/realtime/dashboard-events.service';
+
 import { ConfirmReservationUseCase } from './confirm-reservation.use-case';
 import { ConfirmReservationResponseDto } from './dto/confirm-reservation.response.dto';
 
@@ -7,15 +9,23 @@ import { ConfirmReservationResponseDto } from './dto/confirm-reservation.respons
 export class ConfirmReservationService {
   constructor(
     private readonly useCase: ConfirmReservationUseCase,
+    private readonly dashboardEventsService: DashboardEventsService,
   ) {}
 
-  execute(
+  async execute(
     id: string,
     usuarioId: string,
   ): Promise<ConfirmReservationResponseDto> {
-    return this.useCase.execute(
-      id,
-      usuarioId,
+    const reservation =
+      await this.useCase.execute(
+        id,
+        usuarioId,
+      );
+
+    this.dashboardEventsService.emit(
+      'reservations.updated',
     );
+
+    return reservation;
   }
 }

@@ -87,5 +87,8 @@ import { CancelPurchaseUseCase } from './application/cancel-purchase/cancel-purc
     CancelPurchaseService,
     CancelPurchaseUseCase,
   ],
+  exports: [
+  ListPurchasesService,
+  ],
 })
 export class PurchasesModule {}

@@ -2,6 +2,7 @@ import {
   IsDateString,
   IsEnum,
   IsInt,
+  IsNumber,
   IsOptional,
   IsString,
   IsUUID,
@@ -51,4 +52,18 @@ export class CreateReservationRequestDto {
   @IsString()
   @MaxLength(500)
   observaciones?: string;
+
+  @IsOptional()
+  @IsNumber({
+    maxDecimalPlaces: 2,
+  })
+  @Min(0)
+  precioTotal?: number;
+
+  @IsOptional()
+  @IsNumber({
+    maxDecimalPlaces: 2,
+  })
+  @Min(0)
+  montoSena?: number;
 }

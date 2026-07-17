@@ -2,6 +2,10 @@ import { Injectable } from '@nestjs/common';
 
 import { PrismaService } from '../../../../core/database/prisma.service';
 
+import type {
+  Prisma,
+} from '../../../../generated/prisma/client';
+
 @Injectable()
 export class UpdateReservationRepository {
   constructor(
@@ -14,7 +18,9 @@ export class UpdateReservationRepository {
     });
   }
 
-  findActiveFormulaVersion(formulaId: string) {
+  findActiveFormulaVersion(
+    formulaId: string,
+  ) {
     return this.prisma.formulaVersion.findFirst({
       where: {
         formulaId,
@@ -31,7 +37,7 @@ export class UpdateReservationRepository {
 
   update(
     id: string,
-    data: any,
+    data: Prisma.ReservaUpdateInput,
   ) {
     return this.prisma.reserva.update({
       where: { id },
@@ -49,6 +55,9 @@ export class UpdateReservationRepository {
         formulaId: true,
         formulaVersionId: true,
         observaciones: true,
+        precioTotal: true,
+        montoSena: true,
+        saldoPendiente: true,
         actualizadoEn: true,
       },
     });

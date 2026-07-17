@@ -4,10 +4,15 @@ import {
 } from '@nestjs/common';
 
 import {
+  Decimal,
+} from '../../../../generated/prisma/internal/prismaNamespace';
+
+import {
   TipoReserva,
 } from '../../../../generated/prisma/enums';
 
 import { ReservationHistoryService } from '../reservation-history/reservation-history.service';
+
 import { CreateReservationRepository } from './create-reservation.repository';
 import { CreateReservationRequestDto } from './dto/create-reservation.request.dto';
 import { CreateReservationResponseDto } from './dto/create-reservation.response.dto';
@@ -48,6 +53,42 @@ export class CreateReservationUseCase {
       formulaVersionId = version.id;
     }
 
+    const precioTotal =
+      request.precioTotal === undefined
+        ? undefined
+        : new Decimal(request.precioTotal);
+
+    const montoSena =
+      request.montoSena === undefined
+        ? undefined
+        : new Decimal(request.montoSena);
+
+    if (
+      montoSena !== undefined &&
+      precioTotal === undefined
+    ) {
+      throw new BadRequestException(
+        'Debe indicar el precio total para registrar una seña.',
+      );
+    }
+
+    if (
+      precioTotal !== undefined &&
+      montoSena !== undefined &&
+      montoSena.greaterThan(precioTotal)
+    ) {
+      throw new BadRequestException(
+        'La seña no puede ser mayor al precio total.',
+      );
+    }
+
+    const saldoPendiente =
+      precioTotal === undefined
+        ? undefined
+        : precioTotal.minus(
+            montoSena ?? new Decimal(0),
+          );
+
     const reservation =
       await this.repository.create({
         tipo: request.tipo,
@@ -70,6 +111,9 @@ export class CreateReservationUseCase {
           request.observaciones?.trim(),
         formulaId,
         formulaVersionId,
+        precioTotal,
+        montoSena,
+        saldoPendiente,
         usuarioCreadorId: usuarioId,
         usuarioActualizadorId: usuarioId,
       });

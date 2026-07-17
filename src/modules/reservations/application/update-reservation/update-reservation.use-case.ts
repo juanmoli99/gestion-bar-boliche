@@ -4,21 +4,46 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
+import type {
+  Prisma,
+} from '../../../../generated/prisma/client';
+
+import {
+  Decimal,
+} from '../../../../generated/prisma/internal/prismaNamespace';
+
 import {
   TipoReserva,
 } from '../../../../generated/prisma/enums';
 
-import { ReservationHistoryComparer } from '../reservation-history/helpers/reservation-history-comparer';
-import { ReservationHistoryService } from '../reservation-history/reservation-history.service';
-import { UpdateReservationRepository } from './update-reservation.repository';
-import { UpdateReservationRequestDto } from './dto/update-reservation.request.dto';
-import { UpdateReservationResponseDto } from './dto/update-reservation.response.dto';
+import {
+  ReservationHistoryComparer,
+} from '../reservation-history/helpers/reservation-history-comparer';
+
+import {
+  ReservationHistoryService,
+} from '../reservation-history/reservation-history.service';
+
+import {
+  UpdateReservationRepository,
+} from './update-reservation.repository';
+
+import {
+  UpdateReservationRequestDto,
+} from './dto/update-reservation.request.dto';
+
+import {
+  UpdateReservationResponseDto,
+} from './dto/update-reservation.response.dto';
 
 @Injectable()
 export class UpdateReservationUseCase {
   constructor(
-    private readonly repository: UpdateReservationRepository,
-    private readonly historyService: ReservationHistoryService,
+    private readonly repository:
+      UpdateReservationRepository,
+
+    private readonly historyService:
+      ReservationHistoryService,
   ) {}
 
   async execute(
@@ -35,52 +60,70 @@ export class UpdateReservationUseCase {
       );
     }
 
-    const data: Record<string, unknown> = {
-      usuarioActualizadorId: usuarioId,
+    const data: Prisma.ReservaUpdateInput = {
+      usuarioActualizador: {
+        connect: {
+          id: usuarioId,
+        },
+      },
     };
 
-    if (request.nombreCliente !== undefined) {
+    if (
+      request.nombreCliente !== undefined
+    ) {
       data.nombreCliente =
         request.nombreCliente.trim();
     }
 
-    if (request.telefonoCliente !== undefined) {
+    if (
+      request.telefonoCliente !== undefined
+    ) {
       data.telefonoCliente =
         request.telefonoCliente.trim();
     }
 
-    if (request.fechaHora !== undefined) {
+    if (
+      request.fechaHora !== undefined
+    ) {
       data.fechaHora =
         new Date(request.fechaHora);
     }
 
-    if (request.cantidadPersonas !== undefined) {
+    if (
+      request.cantidadPersonas !== undefined
+    ) {
       data.cantidadPersonas =
         request.cantidadPersonas;
     }
 
-    if (request.observaciones !== undefined) {
+    if (
+      request.observaciones !== undefined
+    ) {
       data.observaciones =
         request.observaciones.trim();
     }
 
-    if (reserva.tipo === TipoReserva.MESA) {
-      if (
-        request.cantidadMenusSinTacc !==
-        undefined
-      ) {
-        data.cantidadMenusSinTacc =
-          request.cantidadMenusSinTacc;
-      }
+    if (
+      reserva.tipo === TipoReserva.MESA &&
+      request.cantidadMenusSinTacc !== undefined
+    ) {
+      data.cantidadMenusSinTacc =
+        request.cantidadMenusSinTacc;
     }
 
-    if (reserva.tipo === TipoReserva.FIESTA) {
-      if (request.tipoFiesta !== undefined) {
+    if (
+      reserva.tipo === TipoReserva.FIESTA
+    ) {
+      if (
+        request.tipoFiesta !== undefined
+      ) {
         data.tipoFiesta =
           request.tipoFiesta.trim();
       }
 
-      if (request.formulaId !== undefined) {
+      if (
+        request.formulaId !== undefined
+      ) {
         const version =
           await this.repository.findActiveFormulaVersion(
             request.formulaId,
@@ -92,9 +135,72 @@ export class UpdateReservationUseCase {
           );
         }
 
-        data.formulaId = request.formulaId;
-        data.formulaVersionId = version.id;
+        data.formula = {
+          connect: {
+            id: request.formulaId,
+          },
+        };
+
+        data.formulaVersion = {
+          connect: {
+            id: version.id,
+          },
+        };
       }
+    }
+
+    const precioTotal =
+      request.precioTotal !== undefined
+        ? new Decimal(request.precioTotal)
+        : reserva.precioTotal;
+
+    const montoSena =
+      request.montoSena !== undefined
+        ? new Decimal(request.montoSena)
+        : reserva.montoSena;
+
+    if (
+      montoSena !== null &&
+      precioTotal === null
+    ) {
+      throw new BadRequestException(
+        'Debe indicar el precio total para registrar una seña.',
+      );
+    }
+
+    if (
+      precioTotal !== null &&
+      montoSena !== null &&
+      montoSena.greaterThan(precioTotal)
+    ) {
+      throw new BadRequestException(
+        'La seña no puede ser mayor al precio total.',
+      );
+    }
+
+    if (
+      request.precioTotal !== undefined
+    ) {
+      data.precioTotal = precioTotal;
+    }
+
+    if (
+      request.montoSena !== undefined
+    ) {
+      data.montoSena = montoSena;
+    }
+
+    if (
+      request.precioTotal !== undefined ||
+      request.montoSena !== undefined
+    ) {
+      data.saldoPendiente =
+        precioTotal === null
+          ? null
+          : precioTotal.minus(
+              montoSena ??
+                new Decimal(0),
+            );
     }
 
     const updatedReservation =
@@ -103,10 +209,16 @@ export class UpdateReservationUseCase {
         data,
       );
 
-    const camposModificados = Object.keys(data)
-      .filter(
+    const ignoredFields = new Set([
+      'usuarioActualizador',
+      'formula',
+      'formulaVersion',
+    ]);
+
+    const camposModificados =
+      Object.keys(data).filter(
         (campo) =>
-          campo !== 'usuarioActualizadorId',
+          !ignoredFields.has(campo),
       );
 
     const valoresAnteriores: Record<
@@ -119,7 +231,9 @@ export class UpdateReservationUseCase {
       unknown
     > = {};
 
-    for (const campo of camposModificados) {
+    for (
+      const campo of camposModificados
+    ) {
       valoresAnteriores[campo] =
         reserva[
           campo as keyof typeof reserva
@@ -129,6 +243,22 @@ export class UpdateReservationUseCase {
         updatedReservation[
           campo as keyof typeof updatedReservation
         ];
+    }
+
+    if (
+      request.formulaId !== undefined
+    ) {
+      valoresAnteriores.formulaId =
+        reserva.formulaId;
+
+      valoresNuevos.formulaId =
+        updatedReservation.formulaId;
+
+      valoresAnteriores.formulaVersionId =
+        reserva.formulaVersionId;
+
+      valoresNuevos.formulaVersionId =
+        updatedReservation.formulaVersionId;
     }
 
     const cambios =

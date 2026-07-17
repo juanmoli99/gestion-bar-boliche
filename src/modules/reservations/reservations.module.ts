@@ -77,5 +77,8 @@ import { UpdateReservationStatusUseCase } from './application/update-reservation
     UpdateReservationStatusService,
     UpdateReservationStatusUseCase,
   ],
+  exports: [
+  ListReservationsService,
+  ],
 })
 export class ReservationsModule {}
