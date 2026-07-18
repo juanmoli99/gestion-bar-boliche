@@ -1,5 +1,9 @@
 import { Controller, Get } from '@nestjs/common';
 
+import { CurrentUser } from '../../../../shared/decorators/current-user.decorator';
+
+import { RolUsuario } from '../../../../generated/prisma/enums';
+
 import { ListStockService } from './list-stock.service';
 import { ListStockResponseDto } from './dto/list-stock.response.dto';
 
@@ -10,7 +14,13 @@ export class ListStockController {
   ) {}
 
   @Get()
-  async list(): Promise<ListStockResponseDto[]> {
-    return this.listStockService.execute();
+  async list(
+    @CurrentUser()
+    user: {
+      id: string;
+      rol: RolUsuario;
+    },
+  ): Promise<ListStockResponseDto[]> {
+    return this.listStockService.execute(user.rol);
   }
-}
+} 

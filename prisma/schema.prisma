@@ -516,3 +516,18 @@ model Valores {
 
   @@map("valores")
 }
+
+model PuestoTrabajo {
+  id            String   @id @default(uuid())
+
+  nombre        String   @unique
+
+  valorHora     Decimal  @default(0) @db.Decimal(14, 2)
+
+  activo        Boolean  @default(true)
+
+  creadoEn      DateTime @default(now())
+  actualizadoEn DateTime @updatedAt
+
+  @@map("puestos_trabajo")
+}

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
-
+import { SalaryPositionsModule } from './modules/salary-positions/salary-positions.module';
 import { ConfigModule } from './core/config/config.module';
 import { PrismaModule } from './core/database/prisma.module';
 import { HealthModule } from './core/health/health.module';
@@ -20,6 +20,7 @@ import { RolesGuard } from './shared/guards/roles.guard';
 
 @Module({
   imports: [
+    SalaryPositionsModule,
     ConfigModule,
     PrismaModule,
     HealthModule,

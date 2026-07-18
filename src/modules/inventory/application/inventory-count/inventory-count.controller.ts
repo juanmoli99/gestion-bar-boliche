@@ -21,21 +21,32 @@ export class InventoryCountController {
     private readonly inventoryCountService: InventoryCountService,
   ) {}
 
-  @Roles(RolUsuario.ADMINISTRADOR)
+  @Roles(
+    RolUsuario.ADMINISTRADOR,
+    RolUsuario.OPERADOR,
+    RolUsuario.BARRA,
+    RolUsuario.COCINA,
+    RolUsuario.MOZO,
+    RolUsuario.LIMPIEZA,
+  )
   @Patch(':id/count')
   async count(
     @Param('id', ParseUUIDPipe)
     id: string,
+
     @CurrentUser()
     user: {
       id: string;
+      rol: RolUsuario;
     },
+
     @Body()
     request: InventoryCountRequestDto,
   ): Promise<InventoryCountResponseDto> {
     return this.inventoryCountService.execute(
       id,
       user.id,
+      user.rol,
       request,
     );
   }

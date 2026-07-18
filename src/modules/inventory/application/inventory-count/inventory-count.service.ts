@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { RolUsuario } from '../../../../generated/prisma/enums';
+
 import { InventoryCountUseCase } from './inventory-count.use-case';
 import { InventoryCountRequestDto } from './dto/inventory-count.request.dto';
 import { InventoryCountResponseDto } from './dto/inventory-count.response.dto';
@@ -12,12 +14,14 @@ export class InventoryCountService {
 
   async execute(
     stockId: string,
-    usuarioId: string,
+    userId: string,
+    rol: RolUsuario,
     request: InventoryCountRequestDto,
   ): Promise<InventoryCountResponseDto> {
     return this.inventoryCountUseCase.execute(
       stockId,
-      usuarioId,
+      userId,
+      rol,
       request,
     );
   }

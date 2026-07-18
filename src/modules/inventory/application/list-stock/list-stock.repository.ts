@@ -1,21 +1,24 @@
-import {
-  Injectable,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
-import {
-  PrismaService,
-} from '../../../../core/database/prisma.service';
+import { PrismaService } from '../../../../core/database/prisma.service';
+
+import { TipoInventario } from '../../../../generated/prisma/enums';
 
 @Injectable()
 export class ListStockRepository {
   constructor(
-    private readonly prisma:
-      PrismaService,
+    private readonly prisma: PrismaService,
   ) {}
 
-  async findAll() {
+  async findAll(
+    inventario: TipoInventario | null,
+  ) {
     return this.prisma.stock.findMany({
       where: {
+        ...(inventario && {
+          inventario,
+        }),
+
         item: {
           activo: true,
         },

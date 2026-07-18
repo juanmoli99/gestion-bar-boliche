@@ -1,45 +1,66 @@
 import {
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 
-import {
-  InventoryCountRepository,
-} from './inventory-count.repository';
+import { RolUsuario } from '../../../../generated/prisma/enums';
 
-import {
-  InventoryCountRequestDto,
-} from './dto/inventory-count.request.dto';
+import { getAllowedInventory } from '../../../../shared/constants/inventory-role-policy';
 
-import {
-  InventoryCountResponseDto,
-} from './dto/inventory-count.response.dto';
+import { InventoryCountRepository } from './inventory-count.repository';
+import { InventoryCountRequestDto } from './dto/inventory-count.request.dto';
+import { InventoryCountResponseDto } from './dto/inventory-count.response.dto';
 
 @Injectable()
 export class InventoryCountUseCase {
   constructor(
-    private readonly repository:
-      InventoryCountRepository,
+    private readonly repository: InventoryCountRepository,
   ) {}
 
   async execute(
     stockId: string,
-    usuarioId: string,
+    userId: string,
+    rol: RolUsuario,
     request: InventoryCountRequestDto,
   ): Promise<InventoryCountResponseDto> {
-    const result =
-      await this.repository.count(
+    const inventarioPermitido =
+      getAllowedInventory(rol);
+
+    const stock =
+      await this.repository.findById(
         stockId,
-        request.cantidadContada,
-        usuarioId,
       );
 
-    if (!result) {
+    if (!stock) {
       throw new NotFoundException(
-        'El stock no existe.',
+        'Stock inexistente.',
       );
     }
 
-    return result;
+    if (
+      inventarioPermitido !== null &&
+      stock.inventario !==
+        inventarioPermitido
+    ) {
+      throw new ForbiddenException(
+        'No tiene permisos para modificar este inventario.',
+      );
+    }
+
+    const resultado =
+      await this.repository.count(
+        stockId,
+        request.cantidadContada,
+        userId,
+      );
+
+    if (!resultado) {
+      throw new NotFoundException(
+        'Stock inexistente.',
+      );
+    }
+
+    return resultado;
   }
 }

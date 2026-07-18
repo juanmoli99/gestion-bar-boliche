@@ -8,14 +8,23 @@ import {
   TipoMovimientoStock,
 } from '../../../../generated/prisma/enums';
 
-
-
 @Injectable()
 export class InventoryCountRepository {
   constructor(
-    private readonly prisma:
-      PrismaService,
+    private readonly prisma: PrismaService,
   ) {}
+
+  async findById(stockId: string) {
+    return this.prisma.stock.findUnique({
+      where: {
+        id: stockId,
+      },
+      select: {
+        id: true,
+        inventario: true,
+      },
+    });
+  }
 
   async count(
     stockId: string,
@@ -93,10 +102,8 @@ export class InventoryCountRepository {
 
               tipo:
                 diferencia > 0
-                  ? TipoMovimientoStock
-                      .AJUSTE_POSITIVO
-                  : TipoMovimientoStock
-                      .AJUSTE_NEGATIVO,
+                  ? TipoMovimientoStock.AJUSTE_POSITIVO
+                  : TipoMovimientoStock.AJUSTE_NEGATIVO,
 
               cantidad:
                 Math.abs(
@@ -131,8 +138,7 @@ export class InventoryCountRepository {
 
           cantidadActual:
             Number(
-              updatedStock
-                .cantidadActual,
+              updatedStock.cantidadActual,
             ),
         };
       },
