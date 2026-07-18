@@ -2,30 +2,49 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common';
 
 import {
-  CreateFormulaRepository,
-} from './create-formula.repository';
+  UpdateFormulaRepository,
+} from './update-formula.repository';
 
 import {
-  CreateFormulaRequestDto,
-} from './dto/create-formula.request.dto';
+  UpdateFormulaRequestDto,
+} from './dto/update-formula.request.dto';
 
 import {
-  CreateFormulaResponseDto,
-} from './dto/create-formula.response.dto';
+  UpdateFormulaResponseDto,
+} from './dto/update-formula.response.dto';
 
 @Injectable()
-export class CreateFormulaUseCase {
+export class UpdateFormulaUseCase {
   constructor(
     private readonly repository:
-      CreateFormulaRepository,
+      UpdateFormulaRepository,
   ) {}
 
   async execute(
-    request: CreateFormulaRequestDto,
-  ): Promise<CreateFormulaResponseDto> {
+    formulaId: string,
+    request: UpdateFormulaRequestDto,
+  ): Promise<UpdateFormulaResponseDto> {
+    const formula =
+      await this.repository.findById(
+        formulaId,
+      );
+
+    if (!formula) {
+      throw new NotFoundException(
+        'La fórmula no existe.',
+      );
+    }
+
+    if (!formula.activa) {
+      throw new BadRequestException(
+        'La fórmula está inactiva.',
+      );
+    }
+
     const nombre =
       request.nombre.trim();
 
@@ -33,33 +52,43 @@ export class CreateFormulaUseCase {
       request.descripcion?.trim() ||
       null;
 
-    const itemIds =
-      request.items.map(
-        (item) => item.itemId,
-      );
-
-    const uniqueItemIds =
-      new Set(itemIds);
+    const duplicatedItemIds =
+      request.items
+        .map((item) => item.itemId)
+        .filter(
+          (
+            itemId,
+            index,
+            items,
+          ) =>
+            items.indexOf(itemId) !==
+            index,
+        );
 
     if (
-      uniqueItemIds.size !==
-      itemIds.length
+      duplicatedItemIds.length > 0
     ) {
       throw new BadRequestException(
         'La fórmula contiene ítems repetidos.',
       );
     }
 
-    const exists =
+    const nameExists =
       await this.repository.existsByName(
         nombre,
+        formulaId,
       );
 
-    if (exists) {
+    if (nameExists) {
       throw new ConflictException(
-        'Ya existe una fórmula con ese nombre.',
+        'Ya existe otra fórmula con ese nombre.',
       );
     }
+
+    const itemIds =
+      request.items.map(
+        (item) => item.itemId,
+      );
 
     const activeItems =
       await this.repository.findActiveItems(
@@ -76,7 +105,8 @@ export class CreateFormulaUseCase {
     }
 
     const result =
-      await this.repository.create({
+      await this.repository.save({
+        formulaId,
         nombre,
         descripcion,
 
@@ -90,9 +120,14 @@ export class CreateFormulaUseCase {
         ),
       });
 
+    if (!result) {
+      throw new NotFoundException(
+        'La fórmula no existe.',
+      );
+    }
+
     return {
       id: result.formula.id,
-
       nombre:
         result.formula.nombre,
 
@@ -108,9 +143,6 @@ export class CreateFormulaUseCase {
       numeroVersion:
         result.version.numeroVersion,
 
-      creadoEn:
-        result.formula.creadoEn,
-
       actualizadoEn:
         result.formula.actualizadoEn,
 
@@ -118,9 +150,7 @@ export class CreateFormulaUseCase {
         result.version.items.map(
           (item) => ({
             id: item.id,
-
-            itemId:
-              item.itemId,
+            itemId: item.itemId,
 
             nombreItem:
               item.item.nombre,

@@ -1,35 +1,52 @@
 import { Injectable } from '@nestjs/common';
+
 import { SaveCalculationService } from '../save-calculation/save-calculation.service';
+
 import { PurchaseCalculationEngine } from '../../domain/purchase-calculation.engine';
 
 import { CalculatePurchasesRequestDto } from './dto/calculate-purchases.request.dto';
 import { CalculatePurchasesResponseDto } from './dto/calculate-purchases.response.dto';
 
+function createArgentinaDate(
+  date: string,
+  endOfDay: boolean,
+): Date {
+  const time = endOfDay
+    ? '23:59:59.999'
+    : '00:00:00.000';
+
+  return new Date(
+    `${date}T${time}-03:00`,
+  );
+}
+
 @Injectable()
 export class CalculatePurchasesUseCase {
   constructor(
-  private readonly engine: PurchaseCalculationEngine,
-  private readonly saveCalculationService: SaveCalculationService,
-) {}
+    private readonly engine: PurchaseCalculationEngine,
+    private readonly saveCalculationService: SaveCalculationService,
+  ) {}
 
   async execute(
-  request: CalculatePurchasesRequestDto,
-  usuarioId: string,
+    request: CalculatePurchasesRequestDto,
+    usuarioId: string,
   ): Promise<CalculatePurchasesResponseDto> {
-
     const result =
       await this.engine.execute(
-        new Date(
-          `${request.fechaDesde}T00:00:00.000`,
+        createArgentinaDate(
+          request.fechaDesde,
+          false,
         ),
-        new Date(
-          `${request.fechaHasta}T23:59:59.999`,
+        createArgentinaDate(
+          request.fechaHasta,
+          true,
         ),
       );
-      await this.saveCalculationService.execute({
+
+    await this.saveCalculationService.execute({
       calculation: result,
       usuarioId,
-      });
+    });
 
     return {
       fechaDesde: request.fechaDesde,

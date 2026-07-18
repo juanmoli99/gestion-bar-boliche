@@ -15,7 +15,7 @@ import {
   Type,
 } from 'class-transformer';
 
-export class CreateFormulaItemRequestDto {
+export class UpdateFormulaItemRequestDto {
   @IsUUID()
   itemId!: string;
 
@@ -27,7 +27,7 @@ export class CreateFormulaItemRequestDto {
   cantidadPorPersona!: number;
 }
 
-export class CreateFormulaRequestDto {
+export class UpdateFormulaRequestDto {
   @IsString()
   @IsNotEmpty()
   @MaxLength(150)
@@ -45,7 +45,7 @@ export class CreateFormulaRequestDto {
   })
   @Type(
     () =>
-      CreateFormulaItemRequestDto,
+      UpdateFormulaItemRequestDto,
   )
-  items!: CreateFormulaItemRequestDto[];
+  items!: UpdateFormulaItemRequestDto[];
 }

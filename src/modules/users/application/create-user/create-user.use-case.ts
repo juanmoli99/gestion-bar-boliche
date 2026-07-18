@@ -1,42 +1,100 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+} from '@nestjs/common';
+
 import * as bcrypt from 'bcrypt';
-import { CreateUserRepository } from './create-user.repository';
-import { CreateUserRequestDto } from './dto/create-user.request.dto';
-import { CreateUserResponseDto } from './dto/create-user.response.dto';
+
+import {
+  CreateUserRepository,
+} from './create-user.repository';
+
+import {
+  CreateUserRequestDto,
+} from './dto/create-user.request.dto';
+
+import {
+  CreateUserResponseDto,
+} from './dto/create-user.response.dto';
 
 @Injectable()
 export class CreateUserUseCase {
   constructor(
-    private readonly repository: CreateUserRepository,
+    private readonly repository:
+      CreateUserRepository,
   ) {}
 
   async execute(
     request: CreateUserRequestDto,
   ): Promise<CreateUserResponseDto> {
-    const usernameExists = await this.repository.existsByUsername(
-      request.usuario,
-    );
+    const nombreCompleto =
+      request.nombreCompleto.trim();
 
-    if (usernameExists) {
-      throw new ConflictException('El nombre de usuario ya está registrado.');
+    const usuario =
+      request.usuario
+        .trim()
+        .toLowerCase();
+
+    const email =
+      request.email
+        ?.trim()
+        .toLowerCase() ||
+      null;
+
+    const existingUser =
+      await this.repository.findByUsername(
+        usuario,
+      );
+
+    if (
+      existingUser?.activo
+    ) {
+      throw new ConflictException(
+        'El nombre de usuario ya está registrado.',
+      );
     }
 
-    if (request.email) {
-      const emailExists = await this.repository.existsByEmail(request.email);
+    if (email) {
+      const emailOwner =
+        await this.repository.findByEmail(
+          email,
+        );
 
-      if (emailExists) {
-        throw new ConflictException('El correo electrónico ya está registrado.');
+      if (
+        emailOwner &&
+        emailOwner.id !==
+          existingUser?.id
+      ) {
+        throw new ConflictException(
+          'El correo electrónico ya está registrado en otra cuenta.',
+        );
       }
     }
 
-    const contrasenaHash = await bcrypt.hash(request.contrasena, 12);
+    const contrasenaHash =
+      await bcrypt.hash(
+        request.contrasena,
+        12,
+      );
 
-    return this.repository.create({
-      nombreCompleto: request.nombreCompleto.trim(),
-      usuario: request.usuario.trim().toLowerCase(),
-      email: request.email?.trim().toLowerCase() ?? null,
+    const data = {
+      nombreCompleto,
+      usuario,
+      email,
       contrasenaHash,
-      rol: request.rol,
-    });
+      rol:
+        request.rol,
+    };
+
+    if (existingUser) {
+      return this.repository.reactivate(
+        existingUser.id,
+        data,
+      );
+    }
+
+    return this.repository.create(
+      data,
+    );
   }
 }

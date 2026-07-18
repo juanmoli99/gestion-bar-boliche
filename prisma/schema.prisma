@@ -11,6 +11,10 @@ datasource db {
 enum RolUsuario {
   ADMINISTRADOR
   OPERADOR
+  BARRA
+  COCINA
+  LIMPIEZA
+  MOZO
 }
 
 model Usuario {
