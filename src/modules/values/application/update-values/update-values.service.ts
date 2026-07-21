@@ -24,8 +24,6 @@ export class UpdateValuesService {
           request.pizzaLibreSabado,
         menuSinTacc:
           request.menuSinTacc,
-        fiestaBarraLibrePorPersona:
-          request.fiestaBarraLibrePorPersona,
       },
       create: {
         id: 1,
@@ -37,8 +35,6 @@ export class UpdateValuesService {
           request.pizzaLibreSabado,
         menuSinTacc:
           request.menuSinTacc,
-        fiestaBarraLibrePorPersona:
-          request.fiestaBarraLibrePorPersona,
       },
     });
   }

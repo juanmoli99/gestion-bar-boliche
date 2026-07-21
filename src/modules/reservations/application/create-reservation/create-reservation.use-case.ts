@@ -119,6 +119,17 @@ export class CreateReservationUseCase {
         );
       }
 
+      if (
+        request.modalidadFiesta ===
+        ModalidadFiesta.BARRA_LIBRE
+      ) {
+        if (!request.tarifaBarraLibreId) {
+          throw new BadRequestException(
+            'Debe seleccionar una tarifa de barra libre.',
+          );
+        }
+      }
+
       const version =
         await this.repository.findFormulaVersion(
           request.formulaId,
@@ -154,6 +165,10 @@ export class CreateReservationUseCase {
       | Decimal
       | undefined;
 
+    let tarifaBarraLibreId:
+      | string
+      | undefined;
+
     if (
       request.tipo === TipoReserva.MESA
     ) {
@@ -185,17 +200,31 @@ export class CreateReservationUseCase {
           totalMenusSinTacc,
         );
     } else if (
-      modalidadFiesta ===
-      ModalidadFiesta.BARRA_LIBRE
-    ) {
-      valorBarraLibreAplicado =
-        values.fiestaBarraLibrePorPersona;
+  modalidadFiesta ===
+  ModalidadFiesta.BARRA_LIBRE
+) {
+  const tarifa =
+    await this.repository.findFreeBarRate(
+      request.tarifaBarraLibreId!,
+    );
 
-      precioTotal =
-        valorBarraLibreAplicado.mul(
-          request.cantidadPersonas,
-        );
-    } else {
+  if (!tarifa) {
+    throw new BadRequestException(
+      'La tarifa de barra libre seleccionada no existe.',
+    );
+  }
+
+    tarifaBarraLibreId =
+      tarifa.id;
+
+    valorBarraLibreAplicado =
+      tarifa.valorPersona;
+
+    precioTotal =
+      valorBarraLibreAplicado.mul(
+        request.cantidadPersonas,
+      );
+  } else {
       precioTotal =
         new Decimal(0);
     }
@@ -257,6 +286,8 @@ export class CreateReservationUseCase {
 
         formulaId,
         formulaVersionId,
+
+        tarifaBarraLibreId,
 
         precioTotal,
         montoSena,

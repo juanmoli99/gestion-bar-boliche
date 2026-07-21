@@ -42,16 +42,20 @@ export class UpdateReservationRepository {
     });
   }
 
-  findValues() {
-    return this.prisma.valores.findUnique({
-      where: {
-        id: 1,
-      },
-      select: {
-        fiestaBarraLibrePorPersona: true,
-      },
-    });
-  }
+  findFreeBarRate(
+  tarifaBarraLibreId: string,
+) {
+  return this.prisma.tarifaBarraLibre.findFirst({
+    where: {
+      id: tarifaBarraLibreId,
+      activa: true,
+    },
+    select: {
+      id: true,
+      valorPersona: true,
+    },
+  });
+}
 
   update(
     id: string,
@@ -79,6 +83,8 @@ export class UpdateReservationRepository {
 
         formulaId: true,
         formulaVersionId: true,
+
+        tarifaBarraLibreId: true,
 
         observaciones: true,
 

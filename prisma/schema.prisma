@@ -285,7 +285,9 @@ model Reserva {
   saldoPendiente Decimal? @db.Decimal(14, 2)
   valorPizzaLibreAplicado Decimal? @db.Decimal(14, 2)
   valorMenuSinTaccAplicado Decimal? @db.Decimal(14, 2)
+  tarifaBarraLibreId String?
   valorBarraLibreAplicado Decimal? @db.Decimal(14, 2)
+  tarifaBarraLibre TarifaBarraLibre? @relation(fields: [tarifaBarraLibreId], references: [id]) 
 
   medioPagoSena String?
   fechaSena     DateTime?
@@ -509,8 +511,6 @@ model Valores {
 
   menuSinTacc Decimal @default(0) @db.Decimal(14, 2)
 
-  fiestaBarraLibrePorPersona Decimal @default(0) @db.Decimal(14, 2)
-
   creadoEn      DateTime @default(now())
   actualizadoEn DateTime @updatedAt
 
@@ -530,4 +530,18 @@ model PuestoTrabajo {
   actualizadoEn DateTime @updatedAt
 
   @@map("puestos_trabajo")
+}
+
+model TarifaBarraLibre {
+  id           String   @id @default(uuid())
+  nombre       String
+  valorPersona Decimal  @db.Decimal(14, 2)
+  activa       Boolean  @default(true)
+  creadoEn     DateTime @default(now())
+  actualizadoEn DateTime @updatedAt
+
+  reservas Reserva[]
+
+  @@unique([nombre])
+  @@map("tarifas_barra_libre")
 }

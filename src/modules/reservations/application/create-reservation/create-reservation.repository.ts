@@ -25,6 +25,7 @@ interface CreateReservationData {
   observaciones?: string;
   formulaId?: string;
   formulaVersionId?: string;
+  tarifaBarraLibreId?: string;
 
   precioTotal: Decimal;
   montoSena?: Decimal;
@@ -61,6 +62,21 @@ export class CreateReservationRepository {
     });
   }
 
+    async findFreeBarRate(
+    tarifaBarraLibreId: string,
+  ) {
+    return this.prisma.tarifaBarraLibre.findFirst({
+      where: {
+        id: tarifaBarraLibreId,
+        activa: true,
+      },
+      select: {
+        id: true,
+        valorPersona: true,
+      },
+    });
+  }
+
   async findValues() {
     return this.prisma.valores.findUnique({
       where: {
@@ -71,7 +87,6 @@ export class CreateReservationRepository {
         pizzaLibreViernes: true,
         pizzaLibreSabado: true,
         menuSinTacc: true,
-        fiestaBarraLibrePorPersona: true,
       },
     });
   }
@@ -96,8 +111,7 @@ export class CreateReservationRepository {
 
         formulaId: true,
         formulaVersionId: true,
-
-        observaciones: true,
+        tarifaBarraLibreId: true,        observaciones: true,
 
         precioTotal: true,
         montoSena: true,

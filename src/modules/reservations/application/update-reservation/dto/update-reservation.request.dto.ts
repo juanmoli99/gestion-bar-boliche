@@ -53,6 +53,10 @@ export class UpdateReservationRequestDto {
   formulaId?: string;
 
   @IsOptional()
+  @IsUUID()
+  tarifaBarraLibreId?: string;
+
+  @IsOptional()
   @IsString()
   @MaxLength(500)
   observaciones?: string;

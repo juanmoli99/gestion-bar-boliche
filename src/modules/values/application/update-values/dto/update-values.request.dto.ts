@@ -16,8 +16,4 @@ export class UpdateValuesRequestDto {
   @IsNumber()
   @Min(0)
   menuSinTacc!: number;
-
-  @IsNumber()
-  @Min(0)
-  fiestaBarraLibrePorPersona!: number;
 }

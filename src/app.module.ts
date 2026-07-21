@@ -14,13 +14,14 @@ import { PurchasesModule } from './modules/purchases/purchases.module';
 import { ReservationsModule } from './modules/reservations/reservations.module';
 import { SuppliersModule } from './modules/suppliers/suppliers.module';
 import { UsersModule } from './modules/users/users.module';
-
+import { FreeBarRatesModule } from './modules/free-bar-rates/free-bar-rates.module';
 import { JwtAuthGuard } from './shared/guards/jwt-auth.guard';
 import { RolesGuard } from './shared/guards/roles.guard';
 
 @Module({
   imports: [
     SalaryPositionsModule,
+    FreeBarRatesModule,
     ConfigModule,
     PrismaModule,
     HealthModule,

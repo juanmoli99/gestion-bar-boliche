@@ -253,11 +253,13 @@ export class UpdateReservationUseCase {
         );
       }
 
-      const cambiaABarraLibre =
-        modalidadFinal ===
+      const cambiaTarifaBarraLibre =
+        request.tarifaBarraLibreId !==
+          undefined ||
+        (modalidadFinal ===
           ModalidadFiesta.BARRA_LIBRE &&
-        reserva.modalidadFiesta !==
-          ModalidadFiesta.BARRA_LIBRE;
+          reserva.modalidadFiesta !==
+            ModalidadFiesta.BARRA_LIBRE);
 
       if (
         modalidadFinal ===
@@ -284,25 +286,43 @@ export class UpdateReservationUseCase {
           | Decimal
           | null;
 
-        if (cambiaABarraLibre) {
-          const values =
-            await this.repository.findValues();
+        if (cambiaTarifaBarraLibre) {
+  const tarifaId =
+    request.tarifaBarraLibreId ??
+    reserva.tarifaBarraLibreId;
 
-          if (!values) {
-            throw new BadRequestException(
-              'Debe configurar el valor de barra libre antes de modificar la reserva.',
-            );
-          }
+  if (!tarifaId) {
+    throw new BadRequestException(
+      'Debe seleccionar una tarifa de barra libre.',
+    );
+  }
 
-          valorBarraLibre =
-            values.fiestaBarraLibrePorPersona;
+  const tarifa =
+    await this.repository.findFreeBarRate(
+      tarifaId,
+    );
 
-          data.valorBarraLibreAplicado =
-            valorBarraLibre;
-        } else {
-          valorBarraLibre =
-            reserva.valorBarraLibreAplicado;
-        }
+  if (!tarifa) {
+    throw new BadRequestException(
+      'La tarifa de barra libre seleccionada no existe.',
+    );
+  }
+
+  valorBarraLibre =
+    tarifa.valorPersona;
+
+  data.tarifaBarraLibre = {
+    connect: {
+      id: tarifa.id,
+    },
+  };
+
+  data.valorBarraLibreAplicado =
+    valorBarraLibre;
+} else {
+  valorBarraLibre =
+    reserva.valorBarraLibreAplicado;
+}
 
         if (
           valorBarraLibre === null
@@ -345,12 +365,13 @@ export class UpdateReservationUseCase {
         data,
       );
 
-    const ignoredFields =
-      new Set([
-        'usuarioActualizador',
-        'formula',
-        'formulaVersion',
-      ]);
+      const ignoredFields =
+        new Set([
+          'usuarioActualizador',
+          'formula',
+          'formulaVersion',
+          'tarifaBarraLibre',
+        ]);
 
     const camposModificados =
       Object.keys(data).filter(
