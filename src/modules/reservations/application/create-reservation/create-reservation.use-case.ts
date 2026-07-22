@@ -172,6 +172,23 @@ export class CreateReservationUseCase {
     if (
       request.tipo === TipoReserva.MESA
     ) {
+
+            if (!request.formulaCocinaId) {
+        throw new BadRequestException(
+          'Debe seleccionar una fórmula de cocina.',
+        );
+      }
+
+      const formulaCocina =
+        await this.repository.findActiveCookingFormula(
+          request.formulaCocinaId,
+        );
+
+      if (!formulaCocina) {
+        throw new BadRequestException(
+          'La fórmula de cocina seleccionada no existe o está inactiva.',
+        );
+      }
       const cantidadPersonasComunes =
         request.cantidadPersonas -
         cantidadMenusSinTacc;
@@ -255,6 +272,8 @@ export class CreateReservationUseCase {
 
     const reservation =
       await this.repository.create({
+
+        
         tipo:
           request.tipo,
 
@@ -286,6 +305,11 @@ export class CreateReservationUseCase {
 
         formulaId,
         formulaVersionId,
+
+        formulaCocinaId:
+          request.tipo === TipoReserva.MESA
+            ? request.formulaCocinaId
+            : undefined,
 
         tarifaBarraLibreId,
 

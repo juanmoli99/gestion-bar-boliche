@@ -42,6 +42,20 @@ export class UpdateReservationRepository {
     });
   }
 
+    findActiveCookingFormula(
+    formulaCocinaId: string,
+  ) {
+    return this.prisma.formulaCocina.findFirst({
+      where: {
+        id: formulaCocinaId,
+        activa: true,
+      },
+      select: {
+        id: true,
+      },
+    });
+  }
+
   findFreeBarRate(
   tarifaBarraLibreId: string,
 ) {
@@ -83,6 +97,7 @@ export class UpdateReservationRepository {
 
         formulaId: true,
         formulaVersionId: true,
+        formulaCocinaId: true,
 
         tarifaBarraLibreId: true,
 

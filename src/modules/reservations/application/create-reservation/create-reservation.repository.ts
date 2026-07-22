@@ -25,6 +25,7 @@ interface CreateReservationData {
   observaciones?: string;
   formulaId?: string;
   formulaVersionId?: string;
+  formulaCocinaId?: string;
   tarifaBarraLibreId?: string;
 
   precioTotal: Decimal;
@@ -55,6 +56,20 @@ export class CreateReservationRepository {
       },
       orderBy: {
         numeroVersion: 'desc',
+      },
+      select: {
+        id: true,
+      },
+    });
+  }
+
+    async findActiveCookingFormula(
+    formulaCocinaId: string,
+  ) {
+    return this.prisma.formulaCocina.findFirst({
+      where: {
+        id: formulaCocinaId,
+        activa: true,
       },
       select: {
         id: true,
@@ -111,7 +126,9 @@ export class CreateReservationRepository {
 
         formulaId: true,
         formulaVersionId: true,
-        tarifaBarraLibreId: true,        observaciones: true,
+        formulaCocinaId: true,
+        tarifaBarraLibreId: true,
+        observaciones: true,
 
         precioTotal: true,
         montoSena: true,

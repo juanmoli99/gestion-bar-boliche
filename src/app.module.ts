@@ -17,9 +17,11 @@ import { UsersModule } from './modules/users/users.module';
 import { FreeBarRatesModule } from './modules/free-bar-rates/free-bar-rates.module';
 import { JwtAuthGuard } from './shared/guards/jwt-auth.guard';
 import { RolesGuard } from './shared/guards/roles.guard';
+import { CookingFormulasModule } from './modules/cooking-formulas/cooking-formulas.module';
 
 @Module({
   imports: [
+    CookingFormulasModule,
     SalaryPositionsModule,
     FreeBarRatesModule,
     ConfigModule,

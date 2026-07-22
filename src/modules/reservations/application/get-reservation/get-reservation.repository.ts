@@ -64,6 +64,13 @@ export class GetReservationRepository {
             numeroVersion: true,
           },
         },
+
+        formulaCocina: {
+          select: {
+            id: true,
+            nombre: true,
+          },
+        },
       },
     });
   }

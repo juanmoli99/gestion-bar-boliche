@@ -13,6 +13,7 @@ import {
 } from '../../../../generated/prisma/internal/prismaNamespace';
 
 import {
+  EstadoReserva,
   ModalidadFiesta,
   TipoReserva,
 } from '../../../../generated/prisma/enums';
@@ -113,6 +114,29 @@ export class UpdateReservationUseCase {
     }
 
     if (
+      reserva.tipo === TipoReserva.MESA &&
+      request.formulaCocinaId !== undefined
+    ) {
+      const formulaCocina =
+        await this.repository
+          .findActiveCookingFormula(
+            request.formulaCocinaId,
+          );
+
+      if (!formulaCocina) {
+        throw new BadRequestException(
+          'La fórmula de cocina seleccionada no existe o está inactiva.',
+        );
+      }
+
+      data.formulaCocina = {
+        connect: {
+          id: request.formulaCocinaId,
+        },
+      };
+    }
+
+    if (
       reserva.tipo === TipoReserva.FIESTA
     ) {
       if (
@@ -190,6 +214,22 @@ export class UpdateReservationUseCase {
     ) {
       data.montoSena =
         montoSena;
+
+      if (
+        reserva.tipo === TipoReserva.MESA &&
+        (
+          reserva.estado ===
+            EstadoReserva.PENDIENTE ||
+          reserva.estado ===
+            EstadoReserva.SENADA
+        )
+      ) {
+        data.estado =
+          montoSena !== null &&
+          montoSena.greaterThan(0)
+            ? EstadoReserva.SENADA
+            : EstadoReserva.PENDIENTE;
+      }
     }
 
     let precioTotal: Decimal;
@@ -256,10 +296,12 @@ export class UpdateReservationUseCase {
       const cambiaTarifaBarraLibre =
         request.tarifaBarraLibreId !==
           undefined ||
-        (modalidadFinal ===
-          ModalidadFiesta.BARRA_LIBRE &&
+        (
+          modalidadFinal ===
+            ModalidadFiesta.BARRA_LIBRE &&
           reserva.modalidadFiesta !==
-            ModalidadFiesta.BARRA_LIBRE);
+            ModalidadFiesta.BARRA_LIBRE
+        );
 
       if (
         modalidadFinal ===
@@ -287,42 +329,43 @@ export class UpdateReservationUseCase {
           | null;
 
         if (cambiaTarifaBarraLibre) {
-  const tarifaId =
-    request.tarifaBarraLibreId ??
-    reserva.tarifaBarraLibreId;
+          const tarifaId =
+            request.tarifaBarraLibreId ??
+            reserva.tarifaBarraLibreId;
 
-  if (!tarifaId) {
-    throw new BadRequestException(
-      'Debe seleccionar una tarifa de barra libre.',
-    );
-  }
+          if (!tarifaId) {
+            throw new BadRequestException(
+              'Debe seleccionar una tarifa de barra libre.',
+            );
+          }
 
-  const tarifa =
-    await this.repository.findFreeBarRate(
-      tarifaId,
-    );
+          const tarifa =
+            await this.repository
+              .findFreeBarRate(
+                tarifaId,
+              );
 
-  if (!tarifa) {
-    throw new BadRequestException(
-      'La tarifa de barra libre seleccionada no existe.',
-    );
-  }
+          if (!tarifa) {
+            throw new BadRequestException(
+              'La tarifa de barra libre seleccionada no existe.',
+            );
+          }
 
-  valorBarraLibre =
-    tarifa.valorPersona;
+          valorBarraLibre =
+            tarifa.valorPersona;
 
-  data.tarifaBarraLibre = {
-    connect: {
-      id: tarifa.id,
-    },
-  };
+          data.tarifaBarraLibre = {
+            connect: {
+              id: tarifa.id,
+            },
+          };
 
-  data.valorBarraLibreAplicado =
-    valorBarraLibre;
-} else {
-  valorBarraLibre =
-    reserva.valorBarraLibreAplicado;
-}
+          data.valorBarraLibreAplicado =
+            valorBarraLibre;
+        } else {
+          valorBarraLibre =
+            reserva.valorBarraLibreAplicado;
+        }
 
         if (
           valorBarraLibre === null
@@ -365,13 +408,14 @@ export class UpdateReservationUseCase {
         data,
       );
 
-      const ignoredFields =
-        new Set([
-          'usuarioActualizador',
-          'formula',
-          'formulaVersion',
-          'tarifaBarraLibre',
-        ]);
+    const ignoredFields =
+      new Set([
+        'usuarioActualizador',
+        'formula',
+        'formulaVersion',
+        'formulaCocina',
+        'tarifaBarraLibre',
+      ]);
 
     const camposModificados =
       Object.keys(data).filter(
@@ -419,6 +463,16 @@ export class UpdateReservationUseCase {
 
       valoresNuevos.formulaVersionId =
         updatedReservation.formulaVersionId;
+    }
+
+    if (
+      request.formulaCocinaId !== undefined
+    ) {
+      valoresAnteriores.formulaCocinaId =
+        reserva.formulaCocinaId;
+
+      valoresNuevos.formulaCocinaId =
+        updatedReservation.formulaCocinaId;
     }
 
     const cambios =

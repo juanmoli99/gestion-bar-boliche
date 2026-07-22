@@ -116,6 +116,17 @@ export class GetReservationUseCase {
             }
           : null,
 
+              formulaCocina:
+        reservation.formulaCocina
+          ? {
+              id:
+                reservation.formulaCocina.id,
+
+              nombre:
+                reservation.formulaCocina.nombre,
+            }
+          : null,
+
       activa:
         reservation.activa,
 

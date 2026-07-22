@@ -18,6 +18,12 @@ export class GetReservationFormulaResponseDto {
   numeroVersion!: number;
 }
 
+export class GetReservationCookingFormulaResponseDto {
+  id!: string;
+
+  nombre!: string;
+}
+
 export class GetReservationResponseDto {
   id!: string;
 
@@ -64,6 +70,9 @@ export class GetReservationResponseDto {
   fechaPagoFinal!: Date | null;
 
   formula!: GetReservationFormulaResponseDto | null;
+
+  formulaCocina!:
+    GetReservationCookingFormulaResponseDto | null;
 
   activa!: boolean;
 

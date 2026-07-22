@@ -55,6 +55,10 @@ export class CreateReservationRequestDto {
 
   @IsOptional()
   @IsUUID()
+  formulaCocinaId?: string;
+
+  @IsOptional()
+  @IsUUID()
   tarifaBarraLibreId?: string;
 
   @IsOptional()

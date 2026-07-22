@@ -111,6 +111,9 @@ model Item {
   ultimoCosto           Decimal                @default(0) @db.Decimal(14, 2)
   costoPromedio         Decimal                @default(0) @db.Decimal(14, 2)
   historialCostos       HistorialCostoItem[]
+  formulaCocinaItems    FormulaCocinaItem[]
+
+  configuracionComoPizzaElaborada ConfiguracionProduccionPizza? @relation("ItemPizzaElaborada")
 
   @@unique([nombre, tipo])
   @@index([categoriaId])
@@ -274,20 +277,20 @@ model Reserva {
   cantidadPersonas     Int
   cantidadMenusSinTacc Int?
 
-  tipoFiesta String?
+  tipoFiesta      String?
   modalidadFiesta ModalidadFiesta?
 
   observaciones     String?
   motivoCancelacion String?
 
-  precioTotal    Decimal? @db.Decimal(14, 2)
-  montoSena      Decimal? @db.Decimal(14, 2)
-  saldoPendiente Decimal? @db.Decimal(14, 2)
-  valorPizzaLibreAplicado Decimal? @db.Decimal(14, 2)
-  valorMenuSinTaccAplicado Decimal? @db.Decimal(14, 2)
-  tarifaBarraLibreId String?
-  valorBarraLibreAplicado Decimal? @db.Decimal(14, 2)
-  tarifaBarraLibre TarifaBarraLibre? @relation(fields: [tarifaBarraLibreId], references: [id]) 
+  precioTotal              Decimal?          @db.Decimal(14, 2)
+  montoSena                Decimal?          @db.Decimal(14, 2)
+  saldoPendiente           Decimal?          @db.Decimal(14, 2)
+  valorPizzaLibreAplicado  Decimal?          @db.Decimal(14, 2)
+  valorMenuSinTaccAplicado Decimal?          @db.Decimal(14, 2)
+  tarifaBarraLibreId       String?
+  valorBarraLibreAplicado  Decimal?          @db.Decimal(14, 2)
+  tarifaBarraLibre         TarifaBarraLibre? @relation(fields: [tarifaBarraLibreId], references: [id])
 
   medioPagoSena String?
   fechaSena     DateTime?
@@ -297,6 +300,8 @@ model Reserva {
 
   formulaId        String?
   formulaVersionId String?
+
+  formulaCocinaId String?
 
   usuarioCreadorId      String?
   usuarioActualizadorId String?
@@ -309,6 +314,8 @@ model Reserva {
   formula FormulaCompra? @relation(fields: [formulaId], references: [id])
 
   formulaVersion FormulaVersion? @relation(fields: [formulaVersionId], references: [id])
+
+  formulaCocina FormulaCocina? @relation(fields: [formulaCocinaId], references: [id])
 
   usuarioCreador Usuario? @relation("ReservasCreadas", fields: [usuarioCreadorId], references: [id])
 
@@ -324,6 +331,7 @@ model Reserva {
   @@index([estado])
   @@index([formulaId])
   @@index([formulaVersionId])
+  @@index([formulaCocinaId])
   @@index([fechaHora])
   @@index([nombreCliente])
   @@map("reservas")
@@ -518,13 +526,13 @@ model Valores {
 }
 
 model PuestoTrabajo {
-  id            String   @id @default(uuid())
+  id String @id @default(uuid())
 
-  nombre        String   @unique
+  nombre String @unique
 
-  valorHora     Decimal  @default(0) @db.Decimal(14, 2)
+  valorHora Decimal @default(0) @db.Decimal(14, 2)
 
-  activo        Boolean  @default(true)
+  activo Boolean @default(true)
 
   creadoEn      DateTime @default(now())
   actualizadoEn DateTime @updatedAt
@@ -533,15 +541,65 @@ model PuestoTrabajo {
 }
 
 model TarifaBarraLibre {
-  id           String   @id @default(uuid())
-  nombre       String
-  valorPersona Decimal  @db.Decimal(14, 2)
-  activa       Boolean  @default(true)
-  creadoEn     DateTime @default(now())
+  id            String   @id @default(uuid())
+  nombre        String
+  valorPersona  Decimal  @db.Decimal(14, 2)
+  activa        Boolean  @default(true)
+  creadoEn      DateTime @default(now())
   actualizadoEn DateTime @updatedAt
 
   reservas Reserva[]
 
   @@unique([nombre])
   @@map("tarifas_barra_libre")
+}
+
+model FormulaCocina {
+  id String @id @default(uuid())
+
+  nombre      String  @unique
+  descripcion String?
+
+  activa Boolean @default(true)
+
+  creadoEn      DateTime @default(now())
+  actualizadoEn DateTime @updatedAt
+
+  reservas Reserva[]
+  items    FormulaCocinaItem[]
+
+  @@map("formulas_cocina")
+}
+
+model FormulaCocinaItem {
+  id String @id @default(uuid())
+
+  formulaCocinaId String
+  itemId          String
+
+  cantidadPorPersona Decimal @db.Decimal(12, 4)
+
+  creadoEn      DateTime @default(now())
+  actualizadoEn DateTime @updatedAt
+
+  formulaCocina FormulaCocina @relation(fields: [formulaCocinaId], references: [id], onDelete: Cascade)
+  item          Item          @relation(fields: [itemId], references: [id])
+
+  @@unique([formulaCocinaId, itemId])
+  @@index([formulaCocinaId])
+  @@index([itemId])
+  @@map("formulas_cocina_items")
+}
+
+model ConfiguracionProduccionPizza {
+  id Int @id @default(1)
+
+  itemPizzaElaboradaId String? @unique
+
+  creadoEn      DateTime @default(now())
+  actualizadoEn DateTime @updatedAt
+
+  itemPizzaElaborada Item? @relation("ItemPizzaElaborada", fields: [itemPizzaElaboradaId], references: [id])
+
+  @@map("configuracion_produccion_pizza")
 }
