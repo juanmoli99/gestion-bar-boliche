@@ -33,10 +33,6 @@ export class UpdateCookingFormulaRequestDto {
   @MaxLength(500)
   descripcion?: string;
 
-  @IsNumber()
-  @Min(0)
-  pizzasNormalesPorPersona!: number;
-
   @IsArray()
   @ArrayNotEmpty()
   @ValidateNested({
