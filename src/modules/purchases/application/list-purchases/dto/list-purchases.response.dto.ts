@@ -1,9 +1,29 @@
-import { Decimal } from '../../../../../generated/prisma/internal/prismaNamespace';
+import {
+  Decimal,
+} from '../../../../../generated/prisma/internal/prismaNamespace';
 
 import {
   EstadoCompra,
   TipoInventario,
 } from '../../../../../generated/prisma/enums';
+
+export class ListPurchaseDetailResponseDto {
+  id!: string;
+
+  itemId!: string;
+
+  item!: string;
+
+  unidadMedida!: string;
+
+  cantidad!: Decimal;
+
+  precioUnitario!: Decimal;
+
+  porcentajeDescuento!: Decimal;
+
+  porcentajeIva!: Decimal;
+}
 
 export class ListPurchasesResponseDto {
   id!: string;
@@ -29,4 +49,6 @@ export class ListPurchasesResponseDto {
   creadoEn!: Date;
 
   actualizadoEn!: Date;
+
+  detalles!: ListPurchaseDetailResponseDto[];
 }

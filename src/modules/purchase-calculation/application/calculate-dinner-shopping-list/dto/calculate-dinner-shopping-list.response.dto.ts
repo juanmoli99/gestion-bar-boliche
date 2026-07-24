@@ -1,7 +1,17 @@
+import {
+  TipoInventario,
+} from '../../../../../generated/prisma/enums';
+
 export class DinnerShoppingListItemResponseDto {
   itemId!: string;
 
   nombreItem!: string;
+
+  proveedorId!: string | null;
+
+  inventario!: TipoInventario;
+
+  precioUnitario!: number;
 
   unidadMedida!: string;
 

@@ -4,6 +4,10 @@ import {
 } from '@nestjs/common';
 
 import {
+  TipoInventario,
+} from '../../../../generated/prisma/enums';
+
+import {
   CalculateDinnerShoppingListRepository,
 } from './calculate-dinner-shopping-list.repository';
 
@@ -275,6 +279,15 @@ export class CalculateDinnerShoppingListUseCase {
                 nombreItem:
                   totalItem.nombreItem,
 
+                proveedorId:
+                  null,
+
+                inventario:
+                  TipoInventario.COCINA,
+
+                precioUnitario:
+                  0,
+
                 unidadMedida:
                   'Sin unidad',
 
@@ -338,6 +351,17 @@ export class CalculateDinnerShoppingListUseCase {
 
               nombreItem:
                 item.nombre,
+
+              proveedorId:
+                item.proveedorId,
+
+              inventario:
+                TipoInventario.COCINA,
+
+              precioUnitario:
+                Number(
+                  item.ultimoCosto,
+                ),
 
               unidadMedida:
                 item.unidadMedida

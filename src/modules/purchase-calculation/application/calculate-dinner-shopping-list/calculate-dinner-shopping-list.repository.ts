@@ -1,6 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+} from '@nestjs/common';
 
-import { PrismaService } from '../../../../core/database/prisma.service';
+import {
+  PrismaService,
+} from '../../../../core/database/prisma.service';
 
 import {
   EstadoReserva,
@@ -11,7 +15,8 @@ import {
 @Injectable()
 export class CalculateDinnerShoppingListRepository {
   constructor(
-    private readonly prisma: PrismaService,
+    private readonly prisma:
+      PrismaService,
   ) {}
 
   async findDinnerReservations(
@@ -20,8 +25,11 @@ export class CalculateDinnerShoppingListRepository {
   ) {
     return this.prisma.reserva.findMany({
       where: {
-        tipo: TipoReserva.MESA,
-        estado: EstadoReserva.SENADA,
+        tipo:
+          TipoReserva.MESA,
+
+        estado:
+          EstadoReserva.SENADA,
 
         formulaCocinaId: {
           not: null,
@@ -64,7 +72,8 @@ export class CalculateDinnerShoppingListRepository {
       },
 
       orderBy: {
-        fechaHora: 'asc',
+        fechaHora:
+          'asc',
       },
     });
   }
@@ -82,6 +91,8 @@ export class CalculateDinnerShoppingListRepository {
       select: {
         id: true,
         nombre: true,
+        proveedorId: true,
+        ultimoCosto: true,
         unidadesPorPack: true,
 
         unidadMedida: {
@@ -99,6 +110,7 @@ export class CalculateDinnerShoppingListRepository {
           },
 
           select: {
+            inventario: true,
             cantidadActual: true,
           },
         },
