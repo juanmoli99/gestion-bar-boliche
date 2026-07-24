@@ -77,6 +77,9 @@ export class CreateItemUseCase {
       unidadMedidaId:
         request.unidadMedidaId,
 
+      proveedorId:
+        request.proveedorId,
+
       unidadesPorPack:
         request.unidadesPorPack,
 

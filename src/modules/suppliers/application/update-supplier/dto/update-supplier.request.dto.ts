@@ -15,7 +15,7 @@ export class UpdateSupplierRequestDto {
   @IsOptional()
   @IsString()
   @MaxLength(200)
-  nombreComercial?: string;
+  nombreComercial?: string | null;
 
   @IsOptional()
   @IsString()
@@ -25,35 +25,35 @@ export class UpdateSupplierRequestDto {
   @IsOptional()
   @IsString()
   @MaxLength(30)
-  telefono?: string;
+  telefono?: string | null;
 
   @IsOptional()
   @IsEmail()
   @MaxLength(255)
-  email?: string;
+  email?: string | null;
 
   @IsOptional()
   @IsString()
   @MaxLength(255)
-  direccion?: string;
+  direccion?: string | null;
 
   @IsOptional()
   @IsString()
   @MaxLength(100)
-  ciudad?: string;
+  ciudad?: string | null;
 
   @IsOptional()
   @IsString()
   @MaxLength(100)
-  provincia?: string;
+  provincia?: string | null;
 
   @IsOptional()
   @IsString()
   @MaxLength(20)
-  codigoPostal?: string;
+  codigoPostal?: string | null;
 
   @IsOptional()
   @IsString()
   @MaxLength(1000)
-  observaciones?: string;
+  observaciones?: string | null;
 }

@@ -1,4 +1,6 @@
-import { TipoItem } from '../../../../../generated/prisma/enums';
+import {
+  TipoItem,
+} from '../../../../../generated/prisma/enums';
 
 export class UpdateItemResponseDto {
   id!: string;
@@ -8,8 +10,9 @@ export class UpdateItemResponseDto {
 
   categoriaId!: string;
   unidadMedidaId!: string;
+  proveedorId!: string;
 
-  unidadesPorPack!: number | null;
+  unidadesPorPack!: number;
   activo!: boolean;
 
   creadoEn!: Date;

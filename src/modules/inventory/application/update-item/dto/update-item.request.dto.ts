@@ -8,7 +8,9 @@ import {
   Min,
 } from 'class-validator';
 
-import { TipoItem } from '../../../../../generated/prisma/enums';
+import {
+  TipoItem,
+} from '../../../../../generated/prisma/enums';
 
 export class UpdateItemRequestDto {
   @IsOptional()
@@ -32,6 +34,10 @@ export class UpdateItemRequestDto {
   @IsOptional()
   @IsUUID()
   unidadMedidaId?: string;
+
+  @IsOptional()
+  @IsUUID()
+  proveedorId?: string;
 
   @IsOptional()
   @IsInt()

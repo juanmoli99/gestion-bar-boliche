@@ -36,10 +36,12 @@ export class CreateItemRequestDto {
   @IsUUID()
   unidadMedidaId!: string;
 
-  @IsOptional()
+  @IsUUID()
+  proveedorId!: string;
+
   @IsInt()
   @Min(1)
-  unidadesPorPack?: number;
+  unidadesPorPack!: number;
 
   @IsOptional()
   @IsNumber({

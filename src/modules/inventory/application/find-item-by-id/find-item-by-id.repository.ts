@@ -17,6 +17,7 @@ export class FindItemByIdRepository {
         tipo: true,
         categoriaId: true,
         unidadMedidaId: true,
+        proveedorId: true,
         unidadesPorPack: true,
         activo: true,
         creadoEn: true,

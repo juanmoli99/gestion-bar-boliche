@@ -8,6 +8,7 @@ interface UpdateItemData {
   tipo?: TipoItem;
   categoriaId?: string;
   unidadMedidaId?: string;
+  proveedorId?: string;
   unidadesPorPack?: number;
 }
 
@@ -67,6 +68,15 @@ export class UpdateItemRepository {
     ) !== null;
   }
 
+  async proveedorExiste(id: string): Promise<boolean> {
+    return (
+      await this.prisma.proveedor.findUnique({
+        where: { id },
+        select: { id: true },
+      })
+    ) !== null;
+  }
+
   async update(id: string, data: UpdateItemData) {
     return this.prisma.item.update({
       where: { id },
@@ -78,6 +88,7 @@ export class UpdateItemRepository {
         tipo: true,
         categoriaId: true,
         unidadMedidaId: true,
+        proveedorId: true,
         unidadesPorPack: true,
         activo: true,
         creadoEn: true,

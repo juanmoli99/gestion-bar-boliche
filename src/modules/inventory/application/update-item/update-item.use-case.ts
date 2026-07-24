@@ -63,12 +63,25 @@ export class UpdateItemUseCase {
       }
     }
 
+    if (request.proveedorId) {
+      const proveedorExiste = await this.repository.proveedorExiste(
+        request.proveedorId,
+      );
+
+      if (!proveedorExiste) {
+        throw new NotFoundException(
+          'El proveedor no existe.',
+        );
+      }
+    }
+
     return this.repository.update(id, {
       nombre: request.nombre?.trim(),
       descripcion: request.descripcion?.trim(),
       tipo: request.tipo,
       categoriaId: request.categoriaId,
       unidadMedidaId: request.unidadMedidaId,
+      proveedorId: request.proveedorId,
       unidadesPorPack: request.unidadesPorPack,
     });
   }

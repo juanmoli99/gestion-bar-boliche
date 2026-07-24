@@ -8,6 +8,23 @@ import { UpdateSupplierRepository } from './update-supplier.repository';
 import { UpdateSupplierRequestDto } from './dto/update-supplier.request.dto';
 import { UpdateSupplierResponseDto } from './dto/update-supplier.response.dto';
 
+function normalizeOptionalField(
+  value: string | null | undefined,
+): string | null | undefined {
+  if (value === undefined) {
+    return undefined;
+  }
+
+  if (value === null) {
+    return null;
+  }
+
+  const normalizedValue =
+    value.trim();
+
+  return normalizedValue || null;
+}
+
 @Injectable()
 export class UpdateSupplierUseCase {
   constructor(
@@ -18,7 +35,8 @@ export class UpdateSupplierUseCase {
     id: string,
     request: UpdateSupplierRequestDto,
   ): Promise<UpdateSupplierResponseDto> {
-    const supplier = await this.repository.findById(id);
+    const supplier =
+      await this.repository.findById(id);
 
     if (!supplier) {
       throw new NotFoundException(
@@ -26,13 +44,15 @@ export class UpdateSupplierUseCase {
       );
     }
 
-    const cuit = request.cuit?.trim();
+    const cuit =
+      request.cuit?.trim();
 
     if (cuit) {
-      const exists = await this.repository.existsByCuit(
-        cuit,
-        id,
-      );
+      const exists =
+        await this.repository.existsByCuit(
+          cuit,
+          id,
+        );
 
       if (exists) {
         throw new ConflictException(
@@ -41,17 +61,58 @@ export class UpdateSupplierUseCase {
       }
     }
 
-    return this.repository.update(id, {
-      razonSocial: request.razonSocial?.trim(),
-      nombreComercial: request.nombreComercial?.trim(),
-      cuit,
-      telefono: request.telefono?.trim(),
-      email: request.email?.trim().toLowerCase(),
-      direccion: request.direccion?.trim(),
-      ciudad: request.ciudad?.trim(),
-      provincia: request.provincia?.trim(),
-      codigoPostal: request.codigoPostal?.trim(),
-      observaciones: request.observaciones?.trim(),
-    });
+    const normalizedEmail =
+      normalizeOptionalField(
+        request.email,
+      );
+
+    return this.repository.update(
+      id,
+      {
+        razonSocial:
+          request.razonSocial?.trim(),
+
+        nombreComercial:
+          normalizeOptionalField(
+            request.nombreComercial,
+          ),
+
+        cuit,
+
+        telefono:
+          normalizeOptionalField(
+            request.telefono,
+          ),
+
+        email:
+          normalizedEmail?.toLowerCase() ??
+          normalizedEmail,
+
+        direccion:
+          normalizeOptionalField(
+            request.direccion,
+          ),
+
+        ciudad:
+          normalizeOptionalField(
+            request.ciudad,
+          ),
+
+        provincia:
+          normalizeOptionalField(
+            request.provincia,
+          ),
+
+        codigoPostal:
+          normalizeOptionalField(
+            request.codigoPostal,
+          ),
+
+        observaciones:
+          normalizeOptionalField(
+            request.observaciones,
+          ),
+      },
+    );
   }
 }

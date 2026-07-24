@@ -4,15 +4,15 @@ import { PrismaService } from '../../../../core/database/prisma.service';
 
 interface UpdateSupplierData {
   razonSocial?: string;
-  nombreComercial?: string;
+  nombreComercial?: string | null;
   cuit?: string;
-  telefono?: string;
-  email?: string;
-  direccion?: string;
-  ciudad?: string;
-  provincia?: string;
-  codigoPostal?: string;
-  observaciones?: string;
+  telefono?: string | null;
+  email?: string | null;
+  direccion?: string | null;
+  ciudad?: string | null;
+  provincia?: string | null;
+  codigoPostal?: string | null;
+  observaciones?: string | null;
 }
 
 @Injectable()

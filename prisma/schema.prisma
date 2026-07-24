@@ -96,10 +96,11 @@ model Item {
   tipo            TipoItem
   categoriaId     String
   unidadMedidaId  String
-  unidadesPorPack Int?
+  unidadesPorPack Int
   activo          Boolean  @default(true)
   creadoEn        DateTime @default(now())
   actualizadoEn   DateTime @updatedAt
+  proveedorId     String
 
   categoria             Categoria              @relation(fields: [categoriaId], references: [id])
   unidadMedida          UnidadMedida           @relation(fields: [unidadMedidaId], references: [id])
@@ -114,6 +115,7 @@ model Item {
   formulaCocinaItems    FormulaCocinaItem[]
 
   configuracionComoPizzaElaborada ConfiguracionProduccionPizza? @relation("ItemPizzaElaborada")
+  proveedor                       Proveedor                     @relation(fields: [proveedorId], references: [id])
 
   @@unique([nombre, tipo])
   @@index([categoriaId])
@@ -181,6 +183,7 @@ model Proveedor {
   creadoEn      DateTime @default(now())
   actualizadoEn DateTime @updatedAt
   compras       Compra[]
+  items         Item[]
 
   @@map("proveedores")
 }

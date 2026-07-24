@@ -20,8 +20,9 @@ interface CreateItemData {
 
   categoriaId: string;
   unidadMedidaId: string;
+  proveedorId: string;
 
-  unidadesPorPack?: number;
+  unidadesPorPack: number;
 
   cantidadActual?: number;
   cantidadMinima?: number;
@@ -96,6 +97,9 @@ export class CreateItemRepository {
               unidadMedidaId:
                 data.unidadMedidaId,
 
+              proveedorId:
+                data.proveedorId,
+
               unidadesPorPack:
                 data.unidadesPorPack,
             },
@@ -107,6 +111,7 @@ export class CreateItemRepository {
               tipo: true,
               categoriaId: true,
               unidadMedidaId: true,
+              proveedorId: true,
               unidadesPorPack: true,
               activo: true,
               creadoEn: true,
@@ -180,9 +185,11 @@ export class CreateItemRepository {
               unidadMedidaId:
                 data.unidadMedidaId,
 
+              proveedorId:
+                data.proveedorId,
+
               unidadesPorPack:
-                data.unidadesPorPack ??
-                null,
+                data.unidadesPorPack,
 
               activo:
                 true,
@@ -195,6 +202,7 @@ export class CreateItemRepository {
               tipo: true,
               categoriaId: true,
               unidadMedidaId: true,
+              proveedorId: true,
               unidadesPorPack: true,
               activo: true,
               creadoEn: true,
@@ -202,11 +210,6 @@ export class CreateItemRepository {
             },
           });
 
-        /*
-         * El flujo de creación administra una única
-         * zona de stock por ítem. Se eliminan posibles
-         * registros antiguos de otras zonas.
-         */
         await transaction.stock.deleteMany({
           where: {
             itemId:

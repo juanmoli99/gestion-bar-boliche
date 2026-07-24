@@ -36,7 +36,9 @@ export class CreateItemResponseDto {
 
   unidadMedidaId!: string;
 
-  unidadesPorPack!: number | null;
+  proveedorId!: string;
+
+  unidadesPorPack!: number;
 
   activo!: boolean;
 
