@@ -42,12 +42,17 @@ import { CancelPurchaseUseCase } from './application/cancel-purchase/cancel-purc
 import { GenerateWeeklyPurchasesRepository } from './application/generate-weekly-purchases/generate-weekly-purchases.repository';
 import { GenerateWeeklyPurchasesService } from './application/generate-weekly-purchases/generate-weekly-purchases.service';
 import { GenerateWeeklyPurchasesUseCase } from './application/generate-weekly-purchases/generate-weekly-purchases.use-case';
+import { HidePurchaseController } from './application/hide-purchase/hide-purchase.controller';
+import { HidePurchaseRepository } from './application/hide-purchase/hide-purchase.repository';
+import { HidePurchaseService } from './application/hide-purchase/hide-purchase.service';
+import { HidePurchaseUseCase } from './application/hide-purchase/hide-purchase.use-case';
 
 @Module({
   imports: [
     PrismaModule,
   ],
   controllers: [
+    HidePurchaseController,
     CreatePurchaseController,
     AddPurchaseItemController,
     ListPurchaseItemsController,
@@ -59,6 +64,9 @@ import { GenerateWeeklyPurchasesUseCase } from './application/generate-weekly-pu
     CancelPurchaseController,
   ],
   providers: [
+    HidePurchaseRepository,
+    HidePurchaseService,
+    HidePurchaseUseCase,
     GenerateWeeklyPurchasesRepository,
     GenerateWeeklyPurchasesService,
     GenerateWeeklyPurchasesUseCase,

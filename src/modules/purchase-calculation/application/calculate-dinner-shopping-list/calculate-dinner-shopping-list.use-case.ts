@@ -107,12 +107,6 @@ export class CalculateDinnerShoppingListUseCase {
       await this.repository
         .findGlutenFreePizzaItem();
 
-    if (!pizzaSinTaccItem) {
-      throw new BadRequestException(
-        'No se encontró el ítem Pizza sin TACC en el inventario.',
-      );
-    }
-
     const totalesPorItem =
       new Map<
         string,
@@ -244,31 +238,38 @@ export class CalculateDinnerShoppingListUseCase {
         }
       }
 
-      if (cantidadMenusSinTacc > 0) {
-  const totalPizzaSinTacc =
-    totalesPorItem.get(
-      pizzaSinTaccItem.id,
-    );
+    if (cantidadMenusSinTacc > 0) {
+      if (!pizzaSinTaccItem) {
+        throw new BadRequestException(
+          'No se encontró el ítem Pizza sin TACC en el inventario.',
+        );
+      }
 
-  if (totalPizzaSinTacc) {
-    totalPizzaSinTacc
-      .cantidadNecesaria +=
-      cantidadMenusSinTacc;
-  } else {
-    totalesPorItem.set(
-      pizzaSinTaccItem.id,
-      {
-        itemId:
+      const cantidadNecesaria =
+        cantidadMenusSinTacc;
+
+      const totalPizzaSinTacc =
+        totalesPorItem.get(
           pizzaSinTaccItem.id,
+        );
 
-        nombreItem:
-          pizzaSinTaccItem.nombre,
+      if (totalPizzaSinTacc) {
+        totalPizzaSinTacc.cantidadNecesaria +=
+          cantidadNecesaria;
+      } else {
+        totalesPorItem.set(
+          pizzaSinTaccItem.id,
+          {
+            itemId:
+              pizzaSinTaccItem.id,
 
-        cantidadNecesaria:
-          cantidadMenusSinTacc,
-      },
-    );
-  }
+            nombreItem:
+              pizzaSinTaccItem.nombre,
+
+            cantidadNecesaria,
+          },
+        );
+      }
 
       const pizzaSinTaccFecha =
         fechaAcumulada.items.get(
@@ -276,9 +277,8 @@ export class CalculateDinnerShoppingListUseCase {
         );
 
       if (pizzaSinTaccFecha) {
-        pizzaSinTaccFecha
-          .cantidadNecesaria +=
-          cantidadMenusSinTacc;
+        pizzaSinTaccFecha.cantidadNecesaria +=
+          cantidadNecesaria;
       } else {
         fechaAcumulada.items.set(
           pizzaSinTaccItem.id,
@@ -289,14 +289,12 @@ export class CalculateDinnerShoppingListUseCase {
             nombreItem:
               pizzaSinTaccItem.nombre,
 
-            cantidadNecesaria:
-              cantidadMenusSinTacc,
+            cantidadNecesaria,
           },
         );
       }
     }
-    }
-
+  }
     const itemIds =
       Array.from(
         totalesPorItem.keys(),

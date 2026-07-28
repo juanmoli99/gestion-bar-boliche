@@ -62,19 +62,22 @@ export class CalculateShoppingListUseCase {
           totalItem.cantidadNecesaria,
         );
 
-        if (!item) {
-          return {
-            itemId: totalItem.itemId,
-            nombreItem: totalItem.nombreItem,
-            unidadMedida: 'Sin unidad',
-            abreviaturaUnidad: '',
-            unidadesPorPack: null,
-            cantidadNecesaria,
-            stockDisponible: 0,
-            cantidadComprar: cantidadNecesaria,
-            packsComprar: null,
-          };
-        }
+      if (!item) {
+        return {
+          itemId: totalItem.itemId,
+          nombreItem: totalItem.nombreItem,
+          proveedorId: null,
+          inventario: 'COCINA',
+          precioUnitario: 0,
+          unidadMedida: 'Sin unidad',
+          abreviaturaUnidad: '',
+          unidadesPorPack: null,
+          cantidadNecesaria,
+          stockDisponible: 0,
+          cantidadComprar: cantidadNecesaria,
+          packsComprar: null,
+        };
+      }
 
         const stockCorrespondiente = item.stocks.find(
           (stock) =>
@@ -106,6 +109,11 @@ export class CalculateShoppingListUseCase {
         return {
           itemId: item.id,
           nombreItem: item.nombre,
+          proveedorId: item.proveedorId,
+          inventario: item.categoria.inventario,
+          precioUnitario: Number(
+            item.ultimoCosto,
+          ),
           unidadMedida:
             item.unidadMedida.nombre,
           abreviaturaUnidad:

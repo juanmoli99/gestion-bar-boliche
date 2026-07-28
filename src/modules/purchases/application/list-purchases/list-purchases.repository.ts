@@ -15,6 +15,9 @@ export class ListPurchasesRepository {
 
   async findAll() {
     return this.prisma.compra.findMany({
+      where: {
+        visibleEnCompras: true,
+      },
       orderBy: {
         creadoEn: 'desc',
       },

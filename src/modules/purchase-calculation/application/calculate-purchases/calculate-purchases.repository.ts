@@ -16,7 +16,7 @@ export class CalculatePurchasesRepository {
     return this.prisma.reserva.findMany({
       where: {
         tipo: TipoReserva.FIESTA,
-        estado: EstadoReserva.CONFIRMADA,
+        estado: EstadoReserva.SENADA,
         fechaHora: {
           gte: fechaDesde,
           lte: fechaHasta,

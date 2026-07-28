@@ -20,12 +20,16 @@ export class CalculateShoppingListRepository {
       select: {
         id: true,
         nombre: true,
+        proveedorId: true,
+        ultimoCosto: true,
         unidadesPorPack: true,
+
         categoria: {
           select: {
             inventario: true,
           },
         },
+
         unidadMedida: {
           select: {
             nombre: true,
@@ -33,6 +37,7 @@ export class CalculateShoppingListRepository {
             permiteDecimal: true,
           },
         },
+
         stocks: {
           select: {
             inventario: true,
