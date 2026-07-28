@@ -8,6 +8,7 @@ import {
 } from '../../../../generated/prisma/internal/prismaNamespace';
 
 import {
+  EstadoReserva,
   ModalidadFiesta,
   TipoReserva,
 } from '../../../../generated/prisma/enums';
@@ -264,6 +265,12 @@ export class CreateReservationUseCase {
       );
     }
 
+    const estado =
+    montoSena !== undefined &&
+    montoSena.greaterThan(0)
+      ? EstadoReserva.SENADA
+      : EstadoReserva.PENDIENTE;
+
     const saldoPendiente =
       precioTotal.minus(
         montoSena ??
@@ -276,6 +283,8 @@ export class CreateReservationUseCase {
         
         tipo:
           request.tipo,
+
+        estado,
 
         nombreCliente:
           request.nombreCliente.trim(),

@@ -7,6 +7,7 @@ import {
 } from '../../../../generated/prisma/internal/prismaNamespace';
 
 import {
+  EstadoReserva,
   ModalidadFiesta,
   TipoReserva,
 } from '../../../../generated/prisma/enums';
@@ -18,7 +19,7 @@ interface CreateReservationData {
   fechaHora: Date;
   cantidadPersonas: number;
   cantidadMenusSinTacc?: number;
-
+  estado: EstadoReserva;
   tipoFiesta?: string;
   modalidadFiesta?: ModalidadFiesta;
 

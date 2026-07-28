@@ -215,21 +215,18 @@ export class UpdateReservationUseCase {
       data.montoSena =
         montoSena;
 
-      if (
-        reserva.tipo === TipoReserva.MESA &&
-        (
-          reserva.estado ===
-            EstadoReserva.PENDIENTE ||
-          reserva.estado ===
-            EstadoReserva.SENADA
-        )
-      ) {
-        data.estado =
-          montoSena !== null &&
-          montoSena.greaterThan(0)
-            ? EstadoReserva.SENADA
-            : EstadoReserva.PENDIENTE;
-      }
+    if (
+      reserva.estado ===
+        EstadoReserva.PENDIENTE ||
+      reserva.estado ===
+        EstadoReserva.SENADA
+    ) {
+      data.estado =
+        montoSena !== null &&
+        montoSena.greaterThan(0)
+          ? EstadoReserva.SENADA
+          : EstadoReserva.PENDIENTE;
+    }
     }
 
     let precioTotal: Decimal;
