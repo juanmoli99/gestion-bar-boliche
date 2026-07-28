@@ -28,6 +28,8 @@ export class ListStockUseCase {
       abreviaturaUnidad: stock.item.unidadMedida.abreviatura,
       inventario: stock.inventario,
       cantidadActual: stock.cantidadActual,
+      cantidadSalon: stock.cantidadSalon,
+      cantidadDeposito: stock.cantidadDeposito,
       cantidadMinima: stock.cantidadMinima,
       creadoEn: stock.creadoEn,
       actualizadoEn: stock.actualizadoEn,

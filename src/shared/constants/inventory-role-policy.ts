@@ -8,7 +8,7 @@ export const INVENTORY_BY_ROLE: Partial<
 
   [RolUsuario.BARRA]: TipoInventario.BEBIDAS,
   [RolUsuario.COCINA]: TipoInventario.COCINA,
-  [RolUsuario.MOZO]: TipoInventario.VARIOS,
+  [RolUsuario.MOZO]: TipoInventario.MOZO,
   [RolUsuario.LIMPIEZA]: TipoInventario.LIMPIEZA,
 };
 

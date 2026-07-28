@@ -19,6 +19,18 @@ export class BulkInventoryCountItemRequestDto {
     maxDecimalPlaces: 3,
   })
   @Min(0)
+  cantidadSalon!: number;
+
+  @IsNumber({
+    maxDecimalPlaces: 3,
+  })
+  @Min(0)
+  cantidadDeposito!: number;
+
+  @IsNumber({
+    maxDecimalPlaces: 3,
+  })
+  @Min(0)
   cantidadContada!: number;
 }
 

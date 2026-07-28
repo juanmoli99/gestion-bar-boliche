@@ -40,6 +40,8 @@ export class ListStockRepository {
         itemId: true,
         inventario: true,
         cantidadActual: true,
+        cantidadSalon: true,
+        cantidadDeposito: true,
         cantidadMinima: true,
         creadoEn: true,
         actualizadoEn: true,

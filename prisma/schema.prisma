@@ -43,7 +43,7 @@ enum TipoInventario {
   BEBIDAS
   COCINA
   LIMPIEZA
-  VARIOS
+  MOZO @map("VARIOS")
 }
 
 enum TipoItem {
@@ -124,13 +124,15 @@ model Item {
 }
 
 model Stock {
-  id             String         @id @default(uuid())
-  itemId         String
-  inventario     TipoInventario
-  cantidadActual Decimal        @default(0) @db.Decimal(12, 3)
-  cantidadMinima Decimal?       @db.Decimal(12, 3)
-  creadoEn       DateTime       @default(now())
-  actualizadoEn  DateTime       @updatedAt
+  id               String         @id @default(uuid())
+  itemId           String
+  inventario       TipoInventario
+  cantidadActual   Decimal        @default(0) @db.Decimal(12, 3)
+  cantidadSalon    Decimal        @default(0) @db.Decimal(12, 3)
+  cantidadDeposito Decimal        @default(0) @db.Decimal(12, 3)
+  cantidadMinima   Decimal?       @db.Decimal(12, 3)
+  creadoEn         DateTime       @default(now())
+  actualizadoEn    DateTime       @updatedAt
 
   item Item @relation(fields: [itemId], references: [id], onDelete: Cascade)
 

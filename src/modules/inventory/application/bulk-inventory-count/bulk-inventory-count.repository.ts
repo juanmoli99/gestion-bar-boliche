@@ -12,6 +12,8 @@ import {
 
 interface BulkCountItem {
   stockId: string;
+  cantidadSalon: number;
+  cantidadDeposito: number;
   cantidadContada: number;
 }
 
@@ -62,6 +64,8 @@ export class BulkInventoryCountRepository {
               itemId: true,
               inventario: true,
               cantidadActual: true,
+              cantidadSalon: true,
+              cantidadDeposito: true,
             },
           });
 
@@ -116,11 +120,22 @@ export class BulkInventoryCountRepository {
               stock.cantidadActual,
             );
 
+          const cantidadSalon =
+            Number(
+              item.cantidadSalon.toFixed(3),
+            );
+
+          const cantidadDeposito =
+            Number(
+              item.cantidadDeposito.toFixed(3),
+            );
+
           const cantidadContada =
             Number(
-              item.cantidadContada.toFixed(
-                3,
-              ),
+              (
+                cantidadSalon +
+                cantidadDeposito
+              ).toFixed(3),
             );
 
           const diferencia =
@@ -131,7 +146,16 @@ export class BulkInventoryCountRepository {
               ).toFixed(3),
             );
 
-          if (diferencia === 0) {
+          const ubicacionesSinCambios =
+            cantidadSalon ===
+              Number(stock.cantidadSalon) &&
+            cantidadDeposito ===
+              Number(stock.cantidadDeposito);
+
+          if (
+            diferencia === 0 &&
+            ubicacionesSinCambios
+          ) {
             results.push({
               stockId:
                 stock.id,
@@ -165,6 +189,10 @@ export class BulkInventoryCountRepository {
               data: {
                 cantidadActual:
                   cantidadContada,
+
+                cantidadSalon,
+
+                cantidadDeposito,
               },
 
               select: {

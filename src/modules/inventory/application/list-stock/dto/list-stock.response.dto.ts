@@ -23,6 +23,10 @@ export class ListStockResponseDto {
 
   cantidadActual!: Decimal;
 
+  cantidadSalon!: Decimal;
+
+  cantidadDeposito!: Decimal;
+
   cantidadMinima!: Decimal | null;
 
   creadoEn!: Date;
