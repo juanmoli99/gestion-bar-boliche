@@ -4,7 +4,8 @@ import {
 } from '@nestjs/common';
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-
+import { RolUsuario } from '../../../../generated/prisma/enums';
+import { GenerateWeeklyPurchasesService } from '../../../purchases/application/generate-weekly-purchases/generate-weekly-purchases.service';
 import { ConfigService } from '../../../../core/config/config.service';
 import { AuthPrismaRepository } from '../../infrastructure/repositories/auth.prisma.repository';
 import { LoginRequestDto } from './dto/login.request.dto';
@@ -16,6 +17,8 @@ export class LoginUseCase {
     private readonly repository: AuthPrismaRepository,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    private readonly generateWeeklyPurchasesService:
+      GenerateWeeklyPurchasesService,
   ) {}
 
   async execute(request: LoginRequestDto): Promise<LoginResponseDto> {
@@ -34,6 +37,11 @@ export class LoginUseCase {
 
     if (!passwordValida) {
       throw new UnauthorizedException('Usuario o contraseña incorrectos.');
+    }
+    if (user.rol === RolUsuario.ADMINISTRADOR) {
+      await this.generateWeeklyPurchasesService.execute(
+        user.id,
+      );
     }
 
     const payload = {

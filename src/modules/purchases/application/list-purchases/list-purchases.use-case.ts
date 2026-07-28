@@ -62,6 +62,8 @@ export class ListPurchasesUseCase {
                 detalle.item
                   .unidadMedida
                   .abreviatura,
+              unidadesPorPack:
+                detalle.item.unidadesPorPack,
               cantidad:
                 detalle.cantidad,
               precioUnitario:

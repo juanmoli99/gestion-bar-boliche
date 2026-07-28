@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-
+import { PurchasesModule } from '../purchases/purchases.module';
 import { ConfigModule } from '../../core/config/config.module';
 
 import { LoginController } from './application/login/login.controller';
@@ -20,6 +20,7 @@ import { JwtStrategy } from './infrastructure/jwt.strategy';
     ConfigModule,
     PassportModule,
     JwtModule.register({}),
+    PurchasesModule,
   ],
   controllers: [
     LoginController,

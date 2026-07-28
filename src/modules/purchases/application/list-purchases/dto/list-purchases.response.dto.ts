@@ -16,6 +16,8 @@ export class ListPurchaseDetailResponseDto {
 
   unidadMedida!: string;
 
+  unidadesPorPack!: number;
+
   cantidad!: Decimal;
 
   precioUnitario!: Decimal;

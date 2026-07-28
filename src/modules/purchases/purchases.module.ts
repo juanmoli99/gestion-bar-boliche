@@ -39,6 +39,9 @@ import { CancelPurchaseController } from './application/cancel-purchase/cancel-p
 import { CancelPurchaseRepository } from './application/cancel-purchase/cancel-purchase.repository';
 import { CancelPurchaseService } from './application/cancel-purchase/cancel-purchase.service';
 import { CancelPurchaseUseCase } from './application/cancel-purchase/cancel-purchase.use-case';
+import { GenerateWeeklyPurchasesRepository } from './application/generate-weekly-purchases/generate-weekly-purchases.repository';
+import { GenerateWeeklyPurchasesService } from './application/generate-weekly-purchases/generate-weekly-purchases.service';
+import { GenerateWeeklyPurchasesUseCase } from './application/generate-weekly-purchases/generate-weekly-purchases.use-case';
 
 @Module({
   imports: [
@@ -56,6 +59,9 @@ import { CancelPurchaseUseCase } from './application/cancel-purchase/cancel-purc
     CancelPurchaseController,
   ],
   providers: [
+    GenerateWeeklyPurchasesRepository,
+    GenerateWeeklyPurchasesService,
+    GenerateWeeklyPurchasesUseCase,
     CreatePurchaseRepository,
     CreatePurchaseService,
     CreatePurchaseUseCase,
@@ -88,7 +94,8 @@ import { CancelPurchaseUseCase } from './application/cancel-purchase/cancel-purc
     CancelPurchaseUseCase,
   ],
   exports: [
-  ListPurchasesService,
+    ListPurchasesService,
+    GenerateWeeklyPurchasesService,
   ],
 })
 export class PurchasesModule {}

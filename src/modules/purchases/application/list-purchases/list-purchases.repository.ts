@@ -50,7 +50,7 @@ export class ListPurchasesRepository {
             item: {
               select: {
                 nombre: true,
-
+                unidadesPorPack: true,
                 unidadMedida: {
                   select: {
                     abreviatura: true,
