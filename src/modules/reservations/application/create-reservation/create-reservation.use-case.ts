@@ -75,6 +75,14 @@ export class CreateReservationUseCase {
     const fechaHora =
       new Date(request.fechaHora);
 
+    const ahora = new Date();
+
+    if (fechaHora < ahora) {
+      throw new BadRequestException(
+        'No se puede crear una reserva para una fecha pasada.',
+      );
+    }
+
     const cantidadMenusSinTacc =
       request.tipo === TipoReserva.MESA
         ? request.cantidadMenusSinTacc ?? 0

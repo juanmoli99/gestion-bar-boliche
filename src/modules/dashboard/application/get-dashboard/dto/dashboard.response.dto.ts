@@ -49,6 +49,24 @@ export class PendingPurchaseDto {
   creadoEn!: Date;
 }
 
+export class ReservationCalendarEntryDto {
+  id!: string;
+  tipo!: 'CENA' | 'FIESTA';
+  nombreCliente!: string;
+  cantidadPersonas!: number;
+}
+
+export class ReservationCalendarDayDto {
+  fecha!: string;
+  cantidadReservas!: number;
+  totalPersonas!: number;
+
+  cantidadReservasCena!: number;
+  cantidadReservasFiesta!: number;
+
+  reservas!: ReservationCalendarEntryDto[];
+}
+
 export class DashboardResponseDto {
   generatedAt!: Date;
 
@@ -61,4 +79,6 @@ export class DashboardResponseDto {
   todayEvents!: TodayEventDto[];
 
   pendingPurchases!: PendingPurchaseDto[];
+
+  reservationCalendar!: ReservationCalendarDayDto[];
 }

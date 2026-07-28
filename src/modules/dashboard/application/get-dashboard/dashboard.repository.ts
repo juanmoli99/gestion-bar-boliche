@@ -63,6 +63,44 @@ function getCurrentDateInArgentina(): string {
   return `${year}-${month}-${day}`;
 }
 
+function getDateInArgentina(
+  date: Date | string,
+): string {
+  const parts = new Intl.DateTimeFormat(
+    'en-CA',
+    {
+      timeZone:
+        'America/Argentina/Buenos_Aires',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    },
+  ).formatToParts(new Date(date));
+
+  const year =
+    parts.find(
+      (part) => part.type === 'year',
+    )?.value;
+
+  const month =
+    parts.find(
+      (part) => part.type === 'month',
+    )?.value;
+
+  const day =
+    parts.find(
+      (part) => part.type === 'day',
+    )?.value;
+
+  if (!year || !month || !day) {
+    throw new Error(
+      'No se pudo determinar la fecha de la reserva.',
+    );
+  }
+
+  return `${year}-${month}-${day}`;
+}
+
 @Injectable()
 export class DashboardRepository {
   constructor(
@@ -80,6 +118,29 @@ export class DashboardRepository {
     const today =
     getCurrentDateInArgentina();
 
+    const [currentYear, currentMonth] =
+      today.split('-').map(Number);
+
+    const nextMonth =
+      currentMonth === 12
+        ? 1
+        : currentMonth + 1;
+
+    const nextMonthYear =
+      currentMonth === 12
+        ? currentYear + 1
+        : currentYear;
+
+    const monthStart =
+      `${currentYear}-${String(
+        currentMonth,
+      ).padStart(2, '0')}-01T00:00:00-03:00`;
+
+    const nextMonthStart =
+      `${nextMonthYear}-${String(
+        nextMonth,
+      ).padStart(2, '0')}-01T00:00:00-03:00`;
+
     const fechaDesde =
     `${today}T00:00:00-03:00`;
 
@@ -87,10 +148,12 @@ export class DashboardRepository {
     `${today}T23:59:59.999-03:00`;
 
     const [
-      criticalInventory,
-      tableReservations,
-      eventReservations,
-      purchases,
+  criticalInventory,
+  tableReservations,
+  eventReservations,
+  purchases,
+  monthlyTableReservations,
+  monthlyEventReservations,
     ] = await Promise.all([
       this.getCriticalInventoryUseCase.execute(),
 
@@ -107,6 +170,18 @@ export class DashboardRepository {
       }),
 
       this.listPurchasesService.execute(),
+
+      this.listReservationsService.execute({
+        fechaDesde: monthStart,
+        fechaHasta: nextMonthStart,
+        tipo: TipoReserva.MESA,
+      }),
+
+      this.listReservationsService.execute({
+        fechaDesde: monthStart,
+        fechaHasta: nextMonthStart,
+        tipo: TipoReserva.FIESTA,
+      }),
     ]);
 
     const inventoryAlerts =
@@ -186,6 +261,145 @@ export class DashboardRepository {
           estado: purchase.estado,
           creadoEn: purchase.creadoEn,
         }));
+      const reservationCalendarMap =
+  new Map<
+    string,
+    {
+      cantidadReservas: number;
+      totalPersonas: number;
+      cantidadReservasCena: number;
+      cantidadReservasFiesta: number;
+      reservas: Array<{
+        id: string;
+        tipo: 'CENA' | 'FIESTA';
+        nombreCliente: string;
+        cantidadPersonas: number;
+      }>;
+    }
+  >();
+
+    const monthlyReservations = [
+      ...monthlyTableReservations.map(
+        (reservation) => ({
+          ...reservation,
+          tipoCalendario: 'CENA' as const,
+        }),
+      ),
+
+      ...monthlyEventReservations.map(
+        (reservation) => ({
+          ...reservation,
+          tipoCalendario: 'FIESTA' as const,
+        }),
+      ),
+    ].filter((reservation) => {
+      const fechaReserva =
+        getDateInArgentina(
+          reservation.fechaHora,
+        );
+
+      return (
+        fechaReserva >= today &&
+        ACTIVE_RESERVATION_STATES.has(
+          reservation.estado,
+        )
+      );
+    });
+
+for (
+  const reservation of
+  monthlyReservations
+) {
+  const fecha =
+    getDateInArgentina(
+      reservation.fechaHora,
+    );
+
+  const current =
+    reservationCalendarMap.get(
+      fecha,
+    ) ?? {
+      cantidadReservas: 0,
+      totalPersonas: 0,
+      cantidadReservasCena: 0,
+      cantidadReservasFiesta: 0,
+      reservas: [],
+    }
+
+    reservationCalendarMap.set(
+    fecha,
+    {
+      cantidadReservas:
+        current.cantidadReservas + 1,
+
+      totalPersonas:
+        current.totalPersonas +
+        reservation.cantidadPersonas,
+
+      cantidadReservasCena:
+        current.cantidadReservasCena +
+        (
+          reservation.tipoCalendario ===
+          'CENA'
+            ? 1
+            : 0
+        ),
+
+      cantidadReservasFiesta:
+        current.cantidadReservasFiesta +
+        (
+          reservation.tipoCalendario ===
+          'FIESTA'
+            ? 1
+            : 0
+        ),
+
+      reservas: [
+        ...current.reservas,
+        {
+          id: reservation.id,
+          tipo:
+            reservation.tipoCalendario,
+          nombreCliente:
+            reservation.nombreCliente,
+          cantidadPersonas:
+            reservation.cantidadPersonas,
+        },
+      ],
+    },
+  );
+}
+
+const reservationCalendar =
+  Array.from(
+    reservationCalendarMap.entries(),
+  )
+    .map(
+      ([
+        fecha,
+        values,
+      ]) => ({
+        fecha,
+        cantidadReservas:
+          values.cantidadReservas,
+        totalPersonas:
+          values.totalPersonas,
+        cantidadReservasCena:
+          values.cantidadReservasCena,
+
+        cantidadReservasFiesta:
+          values.cantidadReservasFiesta,
+        
+        reservas:
+          values.reservas,
+      }),
+    )
+    .sort(
+      (a, b) =>
+        a.fecha.localeCompare(
+          b.fecha,
+        ),
+    );
 
     return {
       generatedAt: new Date(),
@@ -212,6 +426,7 @@ export class DashboardRepository {
       todayReservations,
       todayEvents,
       pendingPurchases,
+      reservationCalendar,
     };
   }
 }
