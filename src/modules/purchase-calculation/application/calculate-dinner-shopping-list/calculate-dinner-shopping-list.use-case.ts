@@ -103,6 +103,16 @@ export class CalculateDinnerShoppingListUseCase {
           fechaHasta,
         );
 
+    const pizzaSinTaccItem =
+      await this.repository
+        .findGlutenFreePizzaItem();
+
+    if (!pizzaSinTaccItem) {
+      throw new BadRequestException(
+        'No se encontró el ítem Pizza sin TACC en el inventario.',
+      );
+    }
+
     const totalesPorItem =
       new Map<
         string,
@@ -155,6 +165,13 @@ export class CalculateDinnerShoppingListUseCase {
       fechaAcumulada.cantidadPersonas +=
         reserva.cantidadPersonas;
 
+      const cantidadMenusSinTacc =
+        reserva.cantidadMenusSinTacc ?? 0;
+
+      const cantidadPersonasComunes =
+        reserva.cantidadPersonas -
+        cantidadMenusSinTacc;
+
       const formulaItems =
         reserva.formulaCocina
           ?.items ?? [];
@@ -174,7 +191,7 @@ export class CalculateDinnerShoppingListUseCase {
             formulaItem
               .cantidadPorPersona,
           ) *
-          reserva.cantidadPersonas;
+          cantidadPersonasComunes;
 
         const totalItem =
           totalesPorItem.get(
@@ -226,6 +243,58 @@ export class CalculateDinnerShoppingListUseCase {
           );
         }
       }
+
+      if (cantidadMenusSinTacc > 0) {
+  const totalPizzaSinTacc =
+    totalesPorItem.get(
+      pizzaSinTaccItem.id,
+    );
+
+  if (totalPizzaSinTacc) {
+    totalPizzaSinTacc
+      .cantidadNecesaria +=
+      cantidadMenusSinTacc;
+  } else {
+    totalesPorItem.set(
+      pizzaSinTaccItem.id,
+      {
+        itemId:
+          pizzaSinTaccItem.id,
+
+        nombreItem:
+          pizzaSinTaccItem.nombre,
+
+        cantidadNecesaria:
+          cantidadMenusSinTacc,
+      },
+    );
+  }
+
+      const pizzaSinTaccFecha =
+        fechaAcumulada.items.get(
+          pizzaSinTaccItem.id,
+        );
+
+      if (pizzaSinTaccFecha) {
+        pizzaSinTaccFecha
+          .cantidadNecesaria +=
+          cantidadMenusSinTacc;
+      } else {
+        fechaAcumulada.items.set(
+          pizzaSinTaccItem.id,
+          {
+            itemId:
+              pizzaSinTaccItem.id,
+
+            nombreItem:
+              pizzaSinTaccItem.nombre,
+
+            cantidadNecesaria:
+              cantidadMenusSinTacc,
+          },
+        );
+      }
+    }
     }
 
     const itemIds =

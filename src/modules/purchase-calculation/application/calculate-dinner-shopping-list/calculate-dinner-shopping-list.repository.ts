@@ -46,6 +46,7 @@ export class CalculateDinnerShoppingListRepository {
         nombreCliente: true,
         fechaHora: true,
         cantidadPersonas: true,
+        cantidadMenusSinTacc: true,
         formulaCocinaId: true,
 
         formulaCocina: {
@@ -86,6 +87,51 @@ export class CalculateDinnerShoppingListRepository {
         id: {
           in: itemIds,
         },
+      },
+
+      select: {
+        id: true,
+        nombre: true,
+        proveedorId: true,
+        ultimoCosto: true,
+        unidadesPorPack: true,
+
+        unidadMedida: {
+          select: {
+            nombre: true,
+            abreviatura: true,
+            permiteDecimal: true,
+          },
+        },
+
+        stocks: {
+          where: {
+            inventario:
+              TipoInventario.COCINA,
+          },
+
+          select: {
+            inventario: true,
+            cantidadActual: true,
+          },
+        },
+      },
+    });
+  }
+
+    async findGlutenFreePizzaItem() {
+    return this.prisma.item.findFirst({
+      where: {
+        nombre: {
+          equals:
+            'Pizza sin TACC',
+
+          mode:
+            'insensitive',
+        },
+
+        activo:
+          true,
       },
 
       select: {
